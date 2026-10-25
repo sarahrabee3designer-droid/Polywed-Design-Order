@@ -1,0 +1,849 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Polywed Monthly Order</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@500;600&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+/* The retainer menu turned into a working order sheet: same Polywed teal, cube texture and
+   service codes, with a live invoice beside the list. Single light look, matching the menu. */
+:root {
+  color-scheme: light;
+  --teal: #007D70;
+  --teal-light: #0AAE9A;
+  --teal-deep: #29665C;
+  --ink: #2B2F2E;
+  --muted: #646B69;
+  --line: #DDE3E1;
+  --paper: #FFFFFF;
+  --mist: #F4F7F6;
+  --warn: #B4531F;
+  --c-sm: #0AAE9A;
+  --c-st: #3D4F9C;
+  --c-pr: #E8794A;
+  --c-pk: #E9A800;
+  --display: "Jost", "Futura", "Century Gothic", system-ui, sans-serif;
+  --body: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --arabic: "IBM Plex Sans Arabic", "Geeza Pro", Tahoma, sans-serif;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.55; margin: 0; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; color: var(--ink); }
+p { margin: 0; }
+.ar { font-family: var(--arabic); direction: rtl; }
+.num { font-variant-numeric: tabular-nums; }
+button, input, textarea, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+
+.top { border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 16px; flex-wrap: wrap; }
+.top img { height: 38px; width: auto; display: block; }
+.top .meta { font-size: 12.5px; color: var(--muted); text-align: right; line-height: 1.5; }
+.top .meta b { color: var(--ink); font-weight: 600; }
+
+.hero { background-color: var(--mist); position: relative; overflow: hidden; }
+.hero::after { content: ""; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='64' viewBox='0 0 56 64'%3E%3Cg fill='none' stroke='%23007D70' stroke-opacity='.09' stroke-width='1'%3E%3Cpath d='M28 0 L56 16 L56 48 L28 64 L0 48 L0 16 Z'/%3E%3Cpath d='M28 32 L28 64 M28 32 L0 16 M28 32 L56 16'/%3E%3C/g%3E%3C/svg%3E"); background-size: 56px 64px; -webkit-mask-image: linear-gradient(90deg, transparent 30%, #000 85%); mask-image: linear-gradient(90deg, transparent 30%, #000 85%); pointer-events: none; }
+.hero .wrap { position: relative; z-index: 1; padding-block: 36px 32px; display: grid; gap: 14px; }
+.kicker { font-family: var(--display); font-size: 12.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--teal); font-weight: 600; }
+.bar-title { border-left: 5px solid var(--teal-light); padding-left: 16px; }
+.hero h1 { font-size: clamp(28px, 4.4vw, 44px); line-height: 1.08; font-weight: 700; max-width: 22ch; }
+.hero .lede { font-size: 16px; color: var(--muted); max-width: 64ch; }
+
+.fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 8px; max-width: 820px; }
+.field { display: grid; gap: 4px; min-width: 0; }
+.field label, .lbl { font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.field input, .field textarea { width: 100%; border: 1px solid var(--line); background: var(--paper); padding: 9px 11px; border-radius: 0; min-width: 0; }
+.field input:focus, .field textarea:focus { border-color: var(--teal); outline: none; box-shadow: 0 0 0 2px rgba(10,174,154,.2); }
+
+.mode { display: inline-flex; justify-self: start; border: 1px solid var(--teal); margin-top: 6px; max-width: 100%; }
+.mode button { border: 0; background: var(--paper); padding: 9px 16px; cursor: pointer; font-weight: 600; font-size: 14px; color: var(--teal); }
+.mode button[aria-pressed="true"] { background: var(--teal); color: #fff; }
+.mode-note { font-size: 13.5px; color: var(--muted); max-width: 70ch; }
+
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 32px; align-items: start; padding-block: 32px 64px; }
+
+.cat { margin-bottom: 30px; }
+.cat-head { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
+.code-tab { font-family: var(--display); font-weight: 700; font-size: 18px; color: #fff; background: var(--c); min-width: 52px; height: 40px; display: grid; place-items: center; padding: 0 10px; }
+.cat-head h3 { font-size: 20px; font-weight: 600; }
+.rows { border-top: 3px solid var(--c); }
+.row { display: grid; grid-template-columns: 28px 48px minmax(0, 1fr) 64px 118px; gap: 12px; align-items: center; padding: 10px 6px 10px 4px; border-bottom: 1px solid var(--line); cursor: pointer; }
+.row:hover { background: var(--mist); }
+.row.on { background: linear-gradient(90deg, rgba(10,174,154,.10), rgba(10,174,154,.02) 80%); }
+.row input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--teal); margin: 0; cursor: pointer; }
+.row .code { font-family: var(--display); font-weight: 600; color: var(--c); font-size: 15px; }
+.row .name { font-weight: 500; }
+.row .name small { display: block; color: var(--muted); font-weight: 400; font-size: 13px; }
+.row .cr { font-family: var(--display); font-weight: 600; font-size: 15px; text-align: right; white-space: nowrap; }
+.row .cr small { font-family: var(--body); font-weight: 400; color: var(--muted); font-size: 12px; }
+.step { display: inline-grid; grid-template-columns: 34px 40px 34px; border: 1px solid var(--line); justify-self: end; background: var(--paper); }
+.step button { border: 0; background: none; height: 34px; cursor: pointer; font-size: 18px; color: var(--teal); }
+.step button:disabled { color: var(--line); cursor: default; }
+.step input { width: 40px; border: 0; border-inline: 1px solid var(--line); text-align: center; font-weight: 600; padding: 0; -moz-appearance: textfield; }
+.step input::-webkit-outer-spin-button, .step input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.row:not(.on) .step { opacity: .55; }
+
+/* summary */
+.summary { position: sticky; top: 16px; border: 2px solid var(--teal); background: var(--paper); }
+.sum-head { background: var(--teal); color: #fff; padding: 16px 18px 14px; display: grid; gap: 2px; }
+.sum-head h2 { color: #fff; font-size: 19px; font-weight: 600; }
+.sum-head .sub { color: #CFEDE8; font-size: 13px; }
+.sum-body { padding: 16px 18px 18px; display: grid; gap: 14px; }
+.meter { display: grid; gap: 6px; }
+.meter .bar { height: 10px; background: var(--mist); border: 1px solid var(--line); position: relative; overflow: hidden; }
+.meter .bar i { position: absolute; inset: 0 auto 0 0; background: var(--teal-light); transition: width .25s ease; }
+.meter .bar i.over { background: var(--c-pr); }
+.meter .cap { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); }
+.meter .cap b { color: var(--ink); font-family: var(--display); font-size: 17px; }
+.lines { display: grid; gap: 7px; font-size: 14px; }
+.lines div { display: flex; justify-content: space-between; gap: 12px; }
+.lines span:last-child { white-space: nowrap; text-align: right; }
+.lines .muted { color: var(--muted); }
+.total { border-top: 2px solid var(--ink); padding-top: 10px; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.total .t-label { font-weight: 600; font-size: 14px; }
+.total .t-val { font-family: var(--display); font-size: 30px; font-weight: 700; color: var(--teal); line-height: 1; white-space: nowrap; }
+.total .t-val small { font-size: 13px; color: var(--muted); font-weight: 500; margin-left: 3px; }
+.hint { font-size: 13px; color: var(--muted); background: var(--mist); padding: 9px 11px; border-left: 3px solid var(--teal-light); }
+.hint.warn { border-left-color: var(--c-pr); }
+.picked { font-size: 13.5px; display: grid; gap: 4px; max-height: 220px; overflow: auto; }
+.picked div { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px dashed var(--line); padding-bottom: 4px; }
+.picked span:last-child { color: var(--muted); white-space: nowrap; }
+.picked .empty { color: var(--muted); border: 0; }
+
+.attach { display: grid; gap: 6px; }
+.drop { border: 1.5px dashed var(--line); background: var(--mist); padding: 12px; text-align: center; font-size: 13.5px; color: var(--muted); cursor: pointer; display: grid; gap: 2px; }
+.drop:hover, .drop.over { border-color: var(--teal-light); color: var(--teal-deep); }
+.drop b { color: var(--teal); font-weight: 600; }
+.files { display: grid; gap: 4px; font-size: 13px; }
+.files div { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 8px; align-items: center; border: 1px solid var(--line); padding: 4px 6px; }
+.files img, .files .ext { width: 34px; height: 34px; object-fit: cover; background: var(--mist); display: grid; place-items: center; font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; }
+.files .fn { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.files .fn small { display: block; color: var(--muted); font-size: 11.5px; }
+.files button { border: 0; background: none; color: var(--muted); font-size: 18px; cursor: pointer; width: 28px; height: 28px; }
+.actions { display: grid; gap: 8px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid var(--teal); background: var(--paper); color: var(--teal); padding: 10px 14px; font-weight: 600; font-size: 14px; cursor: pointer; text-decoration: none; text-align: center; }
+.btn.primary { background: var(--teal); color: #fff; }
+.btn:disabled { opacity: .5; cursor: default; }
+.btn svg { width: 16px; height: 16px; flex: none; }
+.btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.status { font-size: 13px; min-height: 1em; color: var(--teal-deep); }
+.status.err { color: var(--warn); }
+.link-btn { background: none; border: 0; color: var(--muted); font-size: 13px; text-decoration: underline; cursor: pointer; padding: 0; justify-self: center; }
+
+/* send dialog: pay, then send */
+dialog.send { border: 0; padding: 0; width: min(560px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow: auto; background: var(--paper); color: var(--ink); box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+dialog.send::backdrop { background: rgba(23,40,37,.55); }
+.d-head { background: var(--teal); color: #fff; padding: 18px 20px 14px; display: grid; gap: 8px; position: relative; }
+.d-head h2 { color: #fff; font-size: 21px; font-weight: 600; padding-right: 32px; }
+.d-close { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; border: 0; background: none; color: #fff; font-size: 24px; cursor: pointer; line-height: 1; }
+.d-steps { display: flex; gap: 6px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; font-weight: 600; color: #CFEDE8; }
+.d-steps span { padding: 2px 8px; border: 1px solid rgba(255,255,255,.4); }
+.d-steps span.on { background: #fff; color: var(--teal); border-color: #fff; }
+.d-steps span.done { color: #fff; }
+.d-body { padding: 18px 20px 20px; display: grid; gap: 14px; }
+.notice { background: #FFF6E8; border-left: 4px solid var(--c-pk); padding: 10px 12px; font-size: 14px; }
+.notice b { font-weight: 600; }
+.amount { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; }
+.amount .a-val { font-family: var(--display); font-size: 32px; font-weight: 700; color: var(--teal); white-space: nowrap; }
+.bank { border: 1px solid var(--line); }
+.bank div { display: grid; grid-template-columns: 110px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 9px 12px; border-bottom: 1px solid var(--line); font-size: 14px; }
+.bank div:last-child { border-bottom: 0; }
+.bank .k { color: var(--muted); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; }
+.bank .v { font-weight: 600; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.bank .v.missing { color: var(--muted); font-weight: 400; font-style: italic; }
+.copy { border: 1px solid var(--teal); background: var(--paper); color: var(--teal); font-size: 12.5px; font-weight: 600; padding: 5px 10px; cursor: pointer; white-space: nowrap; }
+.copy.ok { background: var(--teal); color: #fff; }
+.copy:disabled { opacity: .4; cursor: default; }
+.confirm { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; cursor: pointer; }
+.confirm input { width: 20px; height: 20px; accent-color: var(--teal); margin: 1px 0 0; flex: none; }
+.send-btns { display: grid; gap: 10px; }
+.send-btns .btn { justify-content: space-between; padding: 13px 16px; font-size: 15px; }
+.send-btns .btn .tick { font-size: 13px; font-weight: 600; }
+.send-btns button.btn { width: 100%; }
+.send-btns .btn.sent { background: var(--mist); border-color: var(--teal-light); color: var(--teal-deep); }
+.done-box { text-align: center; display: grid; gap: 8px; padding: 10px 0; }
+.done-box .big { font-family: var(--display); font-size: 24px; font-weight: 700; color: var(--teal); }
+@media (max-width: 480px) { .bank div { grid-template-columns: minmax(0, 1fr) auto; } .bank .k { grid-column: 1 / -1; margin-bottom: -6px; } }
+
+/* inbox (Sarah only) */
+.inbox { border-top: 4px solid var(--teal-light); background: var(--mist); }
+.inbox .wrap { padding-block: 36px 48px; display: grid; gap: 16px; }
+.inbox h2 { font-size: 24px; font-weight: 700; }
+.orders { display: grid; gap: 12px; }
+.order { background: var(--paper); border: 1px solid var(--line); padding: 14px 16px; display: grid; gap: 8px; }
+.order-top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; align-items: baseline; }
+.order-top b { font-family: var(--display); font-size: 17px; font-weight: 600; }
+.order-top .amt { font-family: var(--display); font-weight: 700; color: var(--teal); font-size: 18px; }
+.order .meta2 { font-size: 13px; color: var(--muted); }
+.order ul { margin: 0; padding-left: 18px; font-size: 14px; }
+.tag { display: inline-block; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; font-weight: 600; padding: 2px 7px; background: var(--teal); color: #fff; margin-left: 6px; vertical-align: 2px; }
+.tag.mid { background: var(--c-pr); }
+
+footer { background: var(--mist); border-top: 4px solid var(--teal-light); }
+footer .wrap { padding-block: 26px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14px; font-size: 13.5px; color: var(--muted); }
+footer b { color: var(--ink); font-family: var(--display); font-size: 16px; font-weight: 600; }
+
+/* phone: summary becomes a bar pinned to the bottom */
+.mbar { display: none; }
+@media (max-width: 900px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .summary { position: static; }
+  .fields { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .fields .field.wide { grid-column: 1 / -1; }
+  .mbar { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; background: var(--teal); color: #fff; padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); justify-content: space-between; align-items: center; gap: 12px; box-shadow: 0 -4px 14px rgba(0,0,0,.12); }
+  .mbar .mt { font-family: var(--display); font-weight: 700; font-size: 20px; }
+  .mbar .ms { font-size: 12.5px; color: #CFEDE8; }
+  .mbar a { color: #fff; font-weight: 600; font-size: 14px; border: 1px solid #fff; padding: 7px 12px; text-decoration: none; white-space: nowrap; }
+  body { padding-bottom: 72px; }
+}
+@media (max-width: 560px) {
+  .fields { grid-template-columns: minmax(0, 1fr); }
+  .row { grid-template-columns: 24px minmax(0, 1fr) 106px; gap: 8px 10px; }
+  .row .code { display: none; }
+  .row .cr { grid-column: 2; grid-row: 2; text-align: left; margin-top: -6px; }
+  .row .step { grid-column: 3; grid-row: 1 / 3; grid-template-columns: 32px 38px 32px; }
+  .step input { width: 38px; }
+  .mode { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+  .mode button { padding: 9px 8px; }
+  .top .meta { text-align: left; }
+}
+@media (prefers-reduced-motion: reduce) { .meter .bar i { transition: none; } }
+
+@page { size: A4; margin: 12mm 0; }
+@media print {
+  body { font-size: 12.5px; padding-bottom: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .mbar, .actions, .attach .drop, .files button, .inbox, .mode, .step button, .row input[type=checkbox], .link-btn, .status { display: none !important; }
+  .row:not(.on), .cat.none { display: none !important; }
+  .row { grid-template-columns: 48px minmax(0, 1fr) 64px 60px; cursor: default; }
+  dialog.send { display: none !important; }
+  .row:not(.on) .step { opacity: 1; }
+  .step { border: 0; grid-template-columns: 40px; }
+  .layout { grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; padding-block: 16px; }
+  .summary { position: static; break-inside: avoid; }
+  .hero .wrap { padding-block: 18px; }
+  .field input, .field textarea { border: 0; padding: 0; background: none; font-weight: 600; }
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <img src="data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNjguNDQ4OSA3MCI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOiMwYWFlOWE7fS5jbHMtMntmaWxsOiMwMDdkNzA7fS5jbHMtM3tmaWxsOiM2OTY4Njg7fTwvc3R5bGU+PC9kZWZzPjxwb2x5Z29uIGNsYXNzPSJjbHMtMSIgcG9pbnRzPSIyOS4xMjEgMjMuMzM1IDE0LjU2MSAxNS4yMTEgMTQuNTYxIDAgMjkuMTIxIDguMTI1IDI5LjEyMSAyMy4zMzUiLz48cG9seWdvbiBjbGFzcz0iY2xzLTIiIHBvaW50cz0iMjkuMTIxIDIzLjMzNSA0My42ODEgMTUuMjExIDQzLjY4MSAwIDI5LjEyMSA4LjEyNSAyOS4xMjEgMjMuMzM1Ii8+PHBvbHlnb24gY2xhc3M9ImNscy0xIiBwb2ludHM9IjI5LjEyMSA3MCAxNC41NjEgNjEuODc2IDE0LjU2MSA0Ni42NjcgMjkuMTIxIDU0Ljc4OSAyOS4xMjEgNzAiLz48cG9seWdvbiBjbGFzcz0iY2xzLTIiIHBvaW50cz0iMjkuMTIxIDcwIDQzLjY4MSA2MS44NzYgNDMuNjgxIDQ2LjY2NyAyOS4xMjEgNTQuNzg5IDI5LjEyMSA3MCIvPjxwb2x5Z29uIGNsYXNzPSJjbHMtMSIgcG9pbnRzPSIxNC41NjEgNDYuNjY3IDAgMzguNTQ1IDAgMjMuMzM1IDE0LjU2MSAzMS40NTcgMTQuNTYxIDQ2LjY2NyIvPjxwb2x5Z29uIGNsYXNzPSJjbHMtMiIgcG9pbnRzPSIxNC41NjEgNDYuNjY3IDI5LjEyMSAzOC41NDUgMjkuMTIxIDIzLjMzNSAxNC41NjEgMzEuNDU3IDE0LjU2MSA0Ni42NjciLz48cG9seWdvbiBjbGFzcz0iY2xzLTEiIHBvaW50cz0iNDMuNjgxIDQ2LjY2NyAyOS4xMiAzOC41NDUgMjkuMTIgMjMuMzM1IDQzLjY4MSAzMS40NTcgNDMuNjgxIDQ2LjY2NyIvPjxwb2x5Z29uIGNsYXNzPSJjbHMtMiIgcG9pbnRzPSI0My42ODEgNDYuNjY3IDU4LjI0MSAzOC41NDUgNTguMjQxIDIzLjMzNSA0My42ODEgMzEuNDU3IDQzLjY4MSA0Ni42NjciLz48cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik0xMTcuNDg0OCw5LjM5NDRjLTEwLjk1NzIsMC0xNC44NjE1LDYuOTI1NC0xNC44NjE1LDEzLjQwNjIsMCw2LjQ2ODQsMy45MDQzLDEzLjM3OTQsMTQuODYxNSwxMy4zNzk0LDEwLjk1ODgsMCwxNC44NjM1LTYuOTExLDE0Ljg2MzUtMTMuMzc5NEMxMzIuMzQ4MywxNi4zMiwxMjguNDQzNiw5LjM5NDQsMTE3LjQ4NDgsOS4zOTQ0Wm03LjAwNDYsMTMuNDA2MmMwLDQuMzc3MS0yLjYxODgsNi45OS03LjAwNDYsNi45OS02LjQ5NjgsMC03LjAwMTYtNS4zNTA3LTcuMDAxNi02Ljk5LDAtMS42NDE2LjUwNDgtNi45OTk1LDcuMDAxNi02Ljk5OTVDMTIxLjg3MDYsMTUuODAxMSwxMjQuNDg5NCwxOC40MTczLDEyNC40ODk0LDIyLjgwMDZaIi8+PHBhdGggY2xhc3M9ImNscy0yIiBkPSJNODUuODIyNCw5LjM5NDRINzQuMDI3OXYzNS42ODhsLjg3MDctLjA4ODVhMTEuMjE3NSwxMS4yMTc1LDAsMCwwLDMuMTA0LS42OTY3QTUuODk5LDUuODk5LDAsMCwwLDgxLjc4LDM4LjQwM1YzNS41Mzg3aDQuMDQyN2M5LjA1NjMsMCwxNS4xNDEzLTUuMjQ4NywxNS4xNDEzLTEzLjA2MTRDMTAwLjk2MzcsMTQuNTMsOTUuMDIsOS4zOTQ0LDg1LjgyMjQsOS4zOTQ0Wk04MS43OCwxNi43Njc0YzAtLjUzMzEuMDI3My0uNjU4Ny43NDUyLS42NTg3aDMuMDY2OWM1LjA5NSwwLDcuNDY3OCwyLjAyMzQsNy40Njc4LDYuMzY4NiwwLDQuMzM1LTIuMzcyOCw2LjM1NDMtNy40Njc4LDYuMzU0M0g4MS43OFoiLz48cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik0yNjcuNTc4Mi4wODg1YTExLjE5OTEsMTEuMTk5MSwwLDAsMC0zLjEwOTMuNjk3Nyw2LjI3MjcsNi4yNzI3LDAsMCwwLTIuMDQwOCwxLjMxNTMsNi4yMzM5LDYuMjMzOSwwLDAsMC0xLjc0MzQsNC41OVY5LjU0MzZIMjU2LjY0MmMtOS4wNTY4LDAtMTUuMTQxNCw1LjI0ODktMTUuMTQxNCwxMy4wNjE0LDAsNy45NDc0LDUuOTQzNiwxMy4wODMsMTUuMTQxNCwxMy4wODNoNy45MjY4YzIuNTY2NywwLDMuODY3Ny0xLjAyNzEsMy44Njc3LTMuMDUxNUwyNjguNDQ4OSwwWm0tNi44OTM1LDE2LjE2MjNWMjguMzE0OWMwLC41MzMxLS4wMjc4LjY1ODctLjc0NTEuNjU4N2gtMy4wNjcxYy01LjA5NDQsMC03LjQ2NzctMi4wMjM0LTcuNDY3Ny02LjM2ODYsMC00LjMzNSwyLjM3MzMtNi4zNTQyLDcuNDY3Ny02LjM1NDJaIi8+PHBhdGggY2xhc3M9ImNscy0yIiBkPSJNMTY3LjA3NzEsMTAuMDk2M2E2LjI3NjksNi4yNzY5LDAsMCwwLTIuMDQwOCwxLjMxNjMsNi4yMzI2LDYuMjMyNiwwLDAsMC0xLjc0MjUsNC41ODkyVjI4LjgzNjdoLTUuMDIyNGMtNC40NTUzLDAtNS4zNjYyLTIuMTA4Ny01LjM5MDktNS41MDYxVjkuMzA4OWwtLjg3MTcuMDlhMTEuMDcxLDExLjA3MSwwLDAsMC0zLjEwOTEuNjk3OCw2LjI3NzQsNi4yNzc0LDAsMCwwLTIuMDQwOSwxLjMxNjMsNi4yMzMsNi4yMzMsMCwwLDAtMS43NDI1LDQuNTg5MmwuMDAxMSw3LjMzMDljLjAyMTYsNy43NjUyLDQuNjYsMTIuMjE4NCwxMi43MjM4LDEyLjIxODRoNS41MTQ0Yy0uMjkzMywxLjAwMzUtMS4zMjY2LDIuMjk3Mi01LjIzLDIuMjk3MkgxNDcuNjUzM2wuMDg5NS44NzE3YTkuMzc1OSw5LjM3NTksMCwwLDAsLjU4ODcsMi42MTgyLDUuMDQxOSw1LjA0MTksMCwwLDAsNS4wMjY2LDMuMjIzNWg1LjczNzZjNy44MjYsMCwxMS45NjIzLTQuMDgsMTEuOTYyMy0xMS43OTc2VjkuMzA4OWwtLjg3MTcuMDlBMTEuMDcxOCwxMS4wNzE4LDAsMCwwLDE2Ny4wNzcxLDEwLjA5NjNaIi8+PHBhdGggY2xhc3M9ImNscy0yIiBkPSJNMTM3Ljc5MDYuOTgwN0E2LjI1NDksNi4yNTQ5LDAsMCwwLDEzNS43NSwyLjI5NmE2LjIzNDEsNi4yMzQxLDAsMCwwLTEuNzQyNCw0LjU5VjM1LjQ5MzVIMTQxLjc3bC4wMDExLTM1LjI5OS0uODcwNy4wODg1QTExLjE4OTEsMTEuMTg5MSwwLDAsMCwxMzcuNzkwNi45ODA3WiIvPjxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTIwOC42MDc4LDEwLjA5NjNhNi4yOCw2LjI4LDAsMCwwLTIuMDQwOSwxLjMxNjMsNi4yMzMzLDYuMjMzMywwLDAsMC0xLjc0MjMsNC41ODkybC0uMDMsMTIuNTcyNWMwLC41NTI2LDAsLjcwMDktLjc3LjcwMDlIMTk3LjMzbC4wMS0xOS45NjYzLS44NzE3LjA5YTExLjA3MzUsMTEuMDczNSwwLDAsMC0zLjEwOTIuNjk3OCw2LjI4LDYuMjgsMCwwLDAtMi4wNDA5LDEuMzE2Myw2LjIzMzMsNi4yMzMzLDAsMCwwLTEuNzQyMyw0LjU4OTJsLjAwMywxMy4yNzM0aC0yLjE1NzFjLTMuNDUwOSwwLTQuODU4OC0xLjQ1OTQtNC44NTg4LTUuMDM2OWwuMDE1NC0xNC45Mjk0LS44NzE4LjA5YTExLjA4MTEsMTEuMDgxMSwwLDAsMC0zLjEwOTEuNjk3OCw2LjI3NjksNi4yNzY5LDAsMCwwLTIuMDQwOCwxLjMxNjMsNi4yMzI2LDYuMjMyNiwwLDAsMC0xLjc0MjUsNC41ODkydjkuMjAxOWMwLDYuOTUsNC4xNjQxLDEwLjc3NzcsMTEuNzI2NSwxMC43Nzc3SDIwOC43MmMzLjE3MSwwLDMuODM2OS0xLjYyNDEsMy44MzY5LTIuOTg2N2wuMDMxOS0yMy42ODU4LS44NzE4LjA5QTExLjA3MzUsMTEuMDczNSwwLDAsMCwyMDguNjA3OCwxMC4wOTYzWiIvPjxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTIzOC43MDg0LDMyLjEzNzRhNC44MDMxLDQuODAzMSwwLDAsMC00Ljc4NTYtMy4wN2gtNC4yNzIyYTguNjM1NSw4LjYzNTUsMCwwLDEtNi40NTEtMi40NDY0aDEzLjU0NjJhMi4zNTksMi4zNTksMCwwLDAsMi41MjU2LTIuNjUzM3YtNC40NDRjMC02Ljk1NjMtNC41NDM4LTExLjQ1MTctMTEuNTc1Mi0xMS40NTE3LTkuMzgyMSwwLTEyLjg3ODIsNy45MjM3LTEyLjg3ODIsMTIuOTE4M2EyMi43MjI3LDIyLjcyMjcsMCwwLDAsLjQyOTEsNC45NzFjLjEyMTUuOTEzOSwxLjYyLDkuNTMyMywxNC40NDQ2LDkuNTMyM2g5LjY2NTJsLS4wOS0uODcwN0E4Ljg0MjgsOC44NDI4LDAsMCwwLDIzOC43MDg0LDMyLjEzNzRaTTIyMi41OTg2LDIwLjJjLjI0LTIuMTM2NiwxLjI1NDYtNS41NTM1LDUuMjgzOC01LjU1MzUsMi40MSwwLDMuOTY4NSwxLjQ1NjMsMy45Njg1LDMuNzExMlYyMC4yWiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTc0LjY3LDY1LjM0NmE0LjcyOCw0LjcyOCwwLDAsMSwuMjkxMy0xLjYyNSw0LjUwOTEsNC41MDkxLDAsMCwxLC44NDA4LTEuNDM1Nyw0LjI1MjYsNC4yNTI2LDAsMCwxLDEuMzQ3Mi0xLjAyNCw0LjA3LDQuMDcsMCwwLDEsMS44MjA2LS4zOTIyLDMuODcxOSwzLjg3MTksMCwwLDEsMi4wODEuNTQ0NEEzLjM0MzUsMy4zNDM1LDAsMCwxLDgyLjM0NjgsNjIuODNsLTEuMzQuOTIzMmEyLjA3LDIuMDcsMCwwLDAtLjM5MjEtLjYzOTEsMi4wMDEsMi4wMDEsMCwwLDAtLjUyNDktLjQxMDcsMi4zODQyLDIuMzg0MiwwLDAsMC0uNTg4Ny0uMjIxMiwyLjU5ODYsMi41OTg2LDAsMCwwLS41ODE0LS4wNywyLjE2OTIsMi4xNjkyLDAsMCwwLTEuMDg4LjI2NTQsMi40NDUyLDIuNDQ1MiwwLDAsMC0uNzc3LjY5LDMuMDgzOSwzLjA4MzksMCwwLDAtLjQ2ODMuOTYxMywzLjc0ODgsMy43NDg4LDAsMCwwLS4xNTg1LDEuMDY4MywzLjYxOTQsMy42MTk0LDAsMCwwLC4xODMyLDEuMTQ0NCwzLjA4NzYsMy4wODc2LDAsMCwwLC41MTg3Ljk2NzUsMi42MDE0LDIuNjAxNCwwLDAsMCwuODAzOS42NzEsMi4xMTA2LDIuMTEwNiwwLDAsMCwxLjAyNC4yNTIxLDIuNDQ4MSwyLjQ0ODEsMCwwLDAsLjU5MzktLjA3NTEsMi4yOTgyLDIuMjk4MiwwLDAsMCwuNTg4Ny0uMjQwOCwyLjI1NDMsMi4yNTQzLDAsMCwwLC41MjQ4LS40MjQsMi4wOTEsMi4wOTEsMCwwLDAsLjM5MjEtLjYyNTdsMS40Mjg1LjgyMjJhMi42MiwyLjYyLDAsMCwxLS41ODc2Ljg5MTMsMy43NTQ0LDMuNzU0NCwwLDAsMS0uODc5LjY1MTUsNC41NzI0LDQuNTcyNCwwLDAsMS0xLjAzNzQuNDA0NCw0LjMyMDksNC4zMjA5LDAsMCwxLTEuMDc0NC4xMzksMy42NDA5LDMuNjQwOSwwLDAsMS0xLjcxMzYtLjQwNDQsNC41LDQuNSwwLDAsMS0xLjM0MTEtMS4wNTZBNC44NTUzLDQuODU1MywwLDAsMSw3NC45OCw2Ny4wMzUsNC43ODQxLDQuNzg0MSwwLDAsMSw3NC42Nyw2NS4zNDZaIi8+PHBhdGggY2xhc3M9ImNscy0zIiBkPSJNODguMTksNjkuOTYyYTMuODY4OCwzLjg2ODgsMCwwLDEtMS43MzIxLS4zODZBNC4yOTcsNC4yOTcsMCwwLDEsODUuMTEsNjguNTUyYTQuNjExNCw0LjYxMTQsMCwwLDEtLjg2NjYtMS40NjA1LDQuODM0Miw0LjgzNDIsMCwwLDEtLjMwMjUtMS42ODE2LDQuNzI4LDQuNzI4LDAsMCwxLDEuMjE5NS0zLjE3NTEsNC4zNTg2LDQuMzU4NiwwLDAsMSwxLjM2LTEuMDA1NSwzLjkzMjgsMy45MzI4LDAsMCwxLDEuNzA3NC0uMzcyNiwzLjc3LDMuNzcsMCwwLDEsMS43MzMxLjM5ODQsNC4zNTUzLDQuMzU1MywwLDAsMSwxLjM0LDEuMDQzNiw0LjcyNjcsNC43MjY3LDAsMCwxLC44NiwxLjQ2NjYsNC43OTkzLDQuNzk5MywwLDAsMSwuMzAzNiwxLjY2OTMsNC42MTM3LDQuNjEzNywwLDAsMS0uMzIzMSwxLjcxMzVBNC42ODU2LDQuNjg1NiwwLDAsMSw5MS4yNSw2OC41OWE0LjMzMSw0LjMzMSwwLDAsMS0xLjM1MzQuOTk5NEEzLjkzMjgsMy45MzI4LDAsMCwxLDg4LjE5LDY5Ljk2MlpNODUuNjk4OSw2NS40MWEzLjc1MjMsMy43NTIzLDAsMCwwLC4xNywxLjEyNDgsMy4wNTgzLDMuMDU4MywwLDAsMCwuNDk0Ljk2MTMsMi40NTcsMi40NTcsMCwwLDAsLjc5LjY3LDIuMTk1MywyLjE5NTMsMCwwLDAsMS4wNjIxLjI1MzIsMi4xNDQ4LDIuMTQ0OCwwLDAsMCwxLjA2ODMtLjI1OTMsMi40Mzc4LDIuNDM3OCwwLDAsMCwuNzc4MS0uNjksMy4xOSwzLjE5LDAsMCwwLC40ODA2LS45Njc1LDMuNzMxNCwzLjczMTQsMCwwLDAsLjE2NDctMS4wOTI5QTMuNjMxMywzLjYzMTMsMCwwLDAsOTAuNTMsNjQuMjg0YTMuMTU5MywzLjE1OTMsMCwwLDAtLjUtLjk2MTQsMi40MzYsMi40MzYsMCwwLDAtLjc4NDItLjY2MzgsMi4xNzY5LDIuMTc2OSwwLDAsMC0xLjA0MjYtLjI0NjksMi4xNDUsMi4xNDUsMCwwLDAtMS4wNjkzLjI1OTMsMi41MzIzLDIuNTMyMywwLDAsMC0uNzg0My42ODM0LDMuMDQ0NywzLjA0NDcsMCwwLDAtLjQ4NjguOTYxM0EzLjczMiwzLjczMiwwLDAsMCw4NS42OTg5LDY1LjQxWiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTk2LjQ0NzcsNjQuMTQ1djUuNzU0Mkg5NC43MDIyVjYwLjkyaDEuMzUzNGw0LjY4LDUuODkzMXYtNS44OEgxMDIuNDh2OC45NjYzaC0xLjQxNjFaIi8+PHBhdGggY2xhc3M9ImNscy0zIiBkPSJNMTEwLjU5OSw2My4yNzIyYTIuMTg0MywyLjE4NDMsMCwwLDAtLjMyMjEtLjI0MDgsMy45NzkyLDMuOTc5MiwwLDAsMC0uNTY5Mi0uMjk2NCw1LjAyNzUsNS4wMjc1LDAsMCwwLS43MjY2LS4yNDcsMy4yMSwzLjIxLDAsMCwwLS43OTc2LS4xMDA4LDEuNzg0OSwxLjc4NDksMCwwLDAtMS4wNzQ0LjI2NTQuODc2MS44NzYxLDAsMCwwLS4zNTQxLjc0NjIuNzY0NS43NjQ1LDAsMCwwLC4xMzI3LjQ2MTIsMS4xNDU5LDEuMTQ1OSwwLDAsMCwuMzg2LjMyMzEsMy4xODU1LDMuMTg1NSwwLDAsMCwuNjM4LjI1MjJxLjM4Ni4xMTQxLjg5MjQuMjQwNy42NTYxLjE3NzYsMS4xOTQ5LjM3ODhhMy4yNCwzLjI0LDAsMCwxLC45MS41MDY0LDIuMDk4LDIuMDk4LDAsMCwxLC41NzYzLjcyNzYsMi40MDgzLDIuNDA4MywwLDAsMSwuMjAxOCwxLjA0MjUsMi41OTY0LDIuNTk2NCwwLDAsMS0uMjcxOCwxLjIzMywyLjI5OCwyLjI5OCwwLDAsMS0uNzI3Ni44Mjg1LDMuMDk4NywzLjA5ODcsMCwwLDEtMS4wNjIxLjQ2MjFBNS40MTg4LDUuNDE4OCwwLDAsMSwxMDguMzYwNSw3MGE2Ljc0MTksNi43NDE5LDAsMCwxLTEuOTk3Ni0uMzAzNiw2LjE0NzQsNi4xNDc0LDAsMCwxLTEuNzctLjg1OTNsLjc3MDgtMS41MDU4YTIuNDMyNSwyLjQzMjUsMCwwLDAsLjQxMTcuMjk3NSw1Ljk4ODgsNS45ODg4LDAsMCwwLC43MDE5LjM2NjQsNS4zMyw1LjMzLDAsMCwwLC44OTc0LjMxLDQuMDU0NSw0LjA1NDUsMCwwLDAsMS4wMTE4LjEyNjVxMS40NDE4LDAsMS40NDE4LS45MjMxYS43Nzg5Ljc3ODksMCwwLDAtLjE2NDYtLjUwNTMsMS4zODUxLDEuMzg1MSwwLDAsMC0uNDY4My0uMzU0MSw0LjQwNjIsNC40MDYyLDAsMCwwLS43MzI4LS4yNzg5cS0uNDMwOC0uMTI1MS0uOTYxMy0uMjY1NWE4LjE0MzcsOC4xNDM3LDAsMCwxLTEuMTItLjM4NDksMy4wNDk0LDMuMDQ5NCwwLDAsMS0uNzktLjQ4NzksMS43OCwxLjc4LDAsMCwxLS40NzM0LS42NTY2LDIuMzE3MywyLjMxNzMsMCwwLDEtLjE1ODYtLjg5ODUsMi43OTEsMi43OTEsMCwwLDEsLjI1MzMtMS4yMTQ0LDIuNDU3NCwyLjQ1NzQsMCwwLDEsLjcwMTktLjg4NTEsMy4xNzU0LDMuMTc1NCwwLDAsMSwxLjA0MjUtLjUzNzIsNC4zMDM5LDQuMzAzOSwwLDAsMSwxLjI3ODMtLjE4MzMsNC45NDA4LDQuOTQwOCwwLDAsMSwxLjc0NDQuMjk3NSw2LjQ5MTcsNi40OTE3LDAsMCwxLDEuMzkxNS43MDE5WiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTEyMC41NjQ2LDYyLjQ1aC0yLjg1ODF2Ny40NDkySDExNS45NjFWNjIuNDVoLTIuODdWNjAuOTJoNy40NzRaIi8+PHBhdGggY2xhc3M9ImNscy0zIiBkPSJNMTIyLjU3NDYsNjkuODk5MlY2MC45MmgzLjk3MTdhMi41NDczLDIuNTQ3MywwLDAsMSwxLjE0NDQuMjU5NCwyLjk0NTUsMi45NDU1LDAsMCwxLC45MDMxLjY4MzQsMy4yMSwzLjIxLDAsMCwxLC41OTQ5Ljk2MTIsMi44OTUsMi44OTUsMCwwLDEsLjIxNSwxLjA4MDcsMi45ODA5LDIuOTgwOSwwLDAsMS0uNDM2MywxLjU4NywyLjUxMTEsMi41MTExLDAsMCwxLTEuMTgyLDEuMDMxMmwyLjExMTMsMy4zNzY4aC0xLjk3MjlsLTEuODg0LTMuMDFoLTEuNzJ2My4wMVptMS43NDU1LTQuNTQwOGgyLjE4ODFhLjkzMTcuOTMxNywwLDAsMCwuNDQ4Ny0uMTEzMiwxLjE0NjcsMS4xNDY3LDAsMCwwLC4zNi0uMzEsMS41NDQ1LDEuNTQ0NSwwLDAsMCwuMjQwOS0uNDYyLDEuNzk2NiwxLjc5NjYsMCwwLDAsLjA4ODUtLjU2OTIsMS42MTQyLDEuNjE0MiwwLDAsMC0uMTAxOS0uNTgxNiwxLjUxNDYsMS41MTQ2LDAsMCwwLS4yNzE2LS40NjIsMS4yMiwxLjIyLDAsMCwwLS4zOTIyLS4zMDI3LDEuMDExMSwxLjAxMTEsMCwwLDAtLjQ0ODctLjEwNzlIMTI0LjMyWiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTEzNS42NzY2LDY4LjQxOTJhMiwyLDAsMCwwLDEuMDQzNy0uMjUzMiwyLjAyLDIuMDIsMCwwLDAsLjY4MzQtLjY1NzYsMi43MjE0LDIuNzIxNCwwLDAsMCwuMzY2My0uOTI5NCw1LjM0MDksNS4zNDA5LDAsMCwwLC4xMDgxLTEuMDgwNlY2MC45MkgxMzkuNjF2NC41Nzg5YTYuNTU4Niw2LjU1ODYsMCwwLDEtLjIyMTIsMS43MzIxLDMuOTc0LDMuOTc0LDAsMCwxLS42OTU4LDEuNDE2MSwzLjMyNTcsMy4zMjU3LDAsMCwxLTEuMjIwNi45NjE0LDQuNjY3NCw0LjY2NzQsMCwwLDEtMy42MS0uMDE4NiwzLjQxMTgsMy40MTE4LDAsMCwxLTEuMjIwNi0uOTg3LDMuOTMxNywzLjkzMTcsMCwwLDEtLjY3NjItMS40MjI0LDYuNzEyNyw2LjcxMjcsMCwwLDEtLjIwOS0xLjY4MTZWNjAuOTJoMS43NDU2djQuNTc4OWE1LjQ3NTcsNS40NzU3LDAsMCwwLC4xMDcsMS4wOTI5LDIuNzI3OCwyLjcyNzgsMCwwLDAsLjM2NzQuOTMsMS45MDM5LDEuOTAzOSwwLDAsMCwxLjcuODk3NFoiLz48cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0xNDEuNzA4Nyw2NS4zNDZBNC43MjgsNC43MjgsMCwwLDEsMTQyLDYzLjcyMWE0LjUwOTEsNC41MDkxLDAsMCwxLC44NDA4LTEuNDM1Nyw0LjI1MjYsNC4yNTI2LDAsMCwxLDEuMzQ3Mi0xLjAyNCw0LjA3LDQuMDcsMCwwLDEsMS44MjA2LS4zOTIyLDMuODcyNSwzLjg3MjUsMCwwLDEsMi4wODExLjU0NDQsMy4zNDM5LDMuMzQzOSwwLDAsMSwxLjI5NTcsMS40MTYybC0xLjM0LjkyMzJhMi4wNywyLjA3LDAsMCwwLS4zOTIxLS42MzkxLDIuMDAxLDIuMDAxLDAsMCwwLS41MjQ5LS40MTA3LDIuMzg0MiwyLjM4NDIsMCwwLDAtLjU4ODctLjIyMTIsMi41OTg3LDIuNTk4NywwLDAsMC0uNTgxNS0uMDcsMi4xNjkxLDIuMTY5MSwwLDAsMC0xLjA4NzkuMjY1NCwyLjQ0NTIsMi40NDUyLDAsMCwwLS43NzcuNjksMy4wODM5LDMuMDgzOSwwLDAsMC0uNDY4My45NjEzLDMuNzQ4OCwzLjc0ODgsMCwwLDAtLjE1ODUsMS4wNjgzLDMuNjE5NCwzLjYxOTQsMCwwLDAsLjE4MzIsMS4xNDQ0LDMuMDg3NiwzLjA4NzYsMCwwLDAsLjUxODcuOTY3NSwyLjYwMTQsMi42MDE0LDAsMCwwLC44MDM5LjY3MSwyLjExMDYsMi4xMTA2LDAsMCwwLDEuMDI0LjI1MjEsMi40NDg4LDIuNDQ4OCwwLDAsMCwuNTkzOS0uMDc1MSwyLjI5ODIsMi4yOTgyLDAsMCwwLC41ODg3LS4yNDA4LDIuMjU0MywyLjI1NDMsMCwwLDAsLjUyNDgtLjQyNCwyLjA5MSwyLjA5MSwwLDAsMCwuMzkyMS0uNjI1N2wxLjQyODUuODIyMmEyLjYyMTEsMi42MjExLDAsMCwxLS41ODc2Ljg5MTMsMy43NTQ0LDMuNzU0NCwwLDAsMS0uODc5LjY1MTUsNC41NzI0LDQuNTcyNCwwLDAsMS0xLjAzNzQuNDA0NCw0LjMyMTEsNC4zMjExLDAsMCwxLTEuMDc0NS4xMzksMy42NDA4LDMuNjQwOCwwLDAsMS0xLjcxMzUtLjQwNDQsNC41LDQuNSwwLDAsMS0xLjM0MTEtMS4wNTYsNC44NTUzLDQuODU1MywwLDAsMS0uODcyNy0xLjQ3ODlBNC43ODQxLDQuNzg0MSwwLDAsMSwxNDEuNzA4Nyw2NS4zNDZaIi8+PHBhdGggY2xhc3M9ImNscy0zIiBkPSJNMTU4LjI2MzEsNjIuNDVoLTIuODU4djcuNDQ5MkgxNTMuNjZWNjIuNDVoLTIuODdWNjAuOTJoNy40NzM5WiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTE2MC4yNzQyLDY5Ljg5OTJWNjAuOTMyOUgxNjIuMDJ2OC45NjYzWiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTE2OC41MDY2LDY5Ljk2MmEzLjg2OTEsMy44NjkxLDAsMCwxLTEuNzMyMS0uMzg2LDQuMjk5Myw0LjI5OTMsMCwwLDEtMS4zNDcyLTEuMDI0LDQuNjA5Myw0LjYwOTMsMCwwLDEtLjg2NjUtMS40NjA1LDQuODMyLDQuODMyLDAsMCwxLS4zMDI2LTEuNjgxNiw0LjczMDYsNC43MzA2LDAsMCwxLDEuMjItMy4xNzUxLDQuMzYxLDQuMzYxLDAsMCwxLDEuMzYtMS4wMDU1LDMuOTMzNCwzLjkzMzQsMCwwLDEsMS43MDc0LS4zNzI2LDMuNzcsMy43NywwLDAsMSwxLjczMzIuMzk4NCw0LjM1NjUsNC4zNTY1LDAsMCwxLDEuMzQsMS4wNDM2LDQuNzI2Nyw0LjcyNjcsMCwwLDEsLjg2LDEuNDY2Niw0LjgwMTYsNC44MDE2LDAsMCwxLC4zMDM2LDEuNjY5Myw0LjYxMzgsNC42MTM4LDAsMCwxLS4zMjMyLDEuNzEzNSw0LjY4MzQsNC42ODM0LDAsMCwxLS44OTEyLDEuNDQxOSw0LjMzMjEsNC4zMzIxLDAsMCwxLTEuMzUzNC45OTk0QTMuOTMzNSwzLjkzMzUsMCwwLDEsMTY4LjUwNjYsNjkuOTYyWk0xNjYuMDE2LDY1LjQxYTMuNzUyMywzLjc1MjMsMCwwLDAsLjE3LDEuMTI0OCwzLjA2LDMuMDYsMCwwLDAsLjQ5NC45NjEzLDIuNDU3MywyLjQ1NzMsMCwwLDAsLjc5MDUuNjcsMi4xOTQ5LDIuMTk0OSwwLDAsMCwxLjA2Mi4yNTMyLDIuMTQ1LDIuMTQ1LDAsMCwwLDEuMDY4NC0uMjU5MywyLjQzODksMi40Mzg5LDAsMCwwLC43NzgxLS42OSwzLjE5MjYsMy4xOTI2LDAsMCwwLC40ODA2LS45Njc1LDMuNzM0NiwzLjczNDYsMCwwLDAsLjE2NDYtMS4wOTI5LDMuNjM0MiwzLjYzNDIsMCwwLDAtLjE3Ny0xLjEyNTksMy4xNjE1LDMuMTYxNSwwLDAsMC0uNS0uOTYxNCwyLjQzNjMsMi40MzYzLDAsMCwwLS43ODQzLS42NjM4LDIuMTc2MywyLjE3NjMsMCwwLDAtMS4wNDI2LS4yNDY5LDIuMTQ1LDIuMTQ1LDAsMCwwLTEuMDY5My4yNTkzLDIuNTM0NiwyLjUzNDYsMCwwLDAtLjc4NDMuNjgzNCwzLjA0ODksMy4wNDg5LDAsMCwwLS40ODY4Ljk2MTNBMy43MzUzLDMuNzM1MywwLDAsMCwxNjYuMDE2LDY1LjQxWiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTE3Ni43NjQ5LDY0LjE0NXY1Ljc1NDJoLTEuNzQ1NlY2MC45MmgxLjM1MzRsNC42OCw1Ljg5MzF2LTUuODhoMS43NDQ1djguOTY2M2gtMS40MTYyWiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTE4OC45MzA5LDY1LjM0NmE0LjcyNzksNC43Mjc5LDAsMCwxLC4yOTEyLTEuNjI1LDQuNTA3NSw0LjUwNzUsMCwwLDEsLjg0MDktMS40MzU3LDQuMjUsNC4yNSwwLDAsMSwxLjM0NzItMS4wMjQsNC4wNjk1LDQuMDY5NSwwLDAsMSwxLjgyMDYtLjM5MjIsMy44NzI0LDMuODcyNCwwLDAsMSwyLjA4MS41NDQ0LDMuMzQ1NCwzLjM0NTQsMCwwLDEsMS4yOTU4LDEuNDE2MmwtMS4zNC45MjMyYTIuMDcsMi4wNywwLDAsMC0uMzkyMi0uNjM5MSwxLjk5NzgsMS45OTc4LDAsMCwwLS41MjQ5LS40MTA3LDIuMzgxMywyLjM4MTMsMCwwLDAtLjU4ODctLjIyMTIsMi41OTgxLDIuNTk4MSwwLDAsMC0uNTgxNS0uMDcsMi4xNjg1LDIuMTY4NSwwLDAsMC0xLjA4NzguMjY1NCwyLjQ0NTIsMi40NDUyLDAsMCwwLS43NzcuNjksMy4wODM5LDMuMDgzOSwwLDAsMC0uNDY4My45NjEzLDMuNzQ4OCwzLjc0ODgsMCwwLDAtLjE1ODUsMS4wNjgzLDMuNjEzOCwzLjYxMzgsMCwwLDAsLjE4MzIsMS4xNDQ0LDMuMDgzNSwzLjA4MzUsMCwwLDAsLjUxODcuOTY3NSwyLjYwMSwyLjYwMSwwLDAsMCwuODAzOC42NzEsMi4xMTA5LDIuMTEwOSwwLDAsMCwxLjAyNC4yNTIxLDIuNDQ4MSwyLjQ0ODEsMCwwLDAsLjU5MzktLjA3NTEsMi4yOTQ3LDIuMjk0NywwLDAsMCwuNTg4Ni0uMjQwOCwyLjI1MDYsMi4yNTA2LDAsMCwwLC41MjQ5LS40MjQsMi4wODkzLDIuMDg5MywwLDAsMCwuMzkyMi0uNjI1N2wxLjQyODUuODIyMmEyLjYyMjgsMi42MjI4LDAsMCwxLS41ODc3Ljg5MTMsMy43NTM5LDMuNzUzOSwwLDAsMS0uODc4OS42NTE1LDQuNTczMiw0LjU3MzIsMCwwLDEtMS4wMzc1LjQwNDQsNC4zMiw0LjMyLDAsMCwxLTEuMDc0NC4xMzksMy42NDE1LDMuNjQxNSwwLDAsMS0xLjcxMzYtLjQwNDQsNC40OTg2LDQuNDk4NiwwLDAsMS0xLjM0MS0xLjA1Niw0Ljg1NTUsNC44NTU1LDAsMCwxLS44NzI4LTEuNDc4OUE0Ljc4MTcsNC43ODE3LDAsMCwxLDE4OC45MzA5LDY1LjM0NloiLz48cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0yMDYuMzcsNjAuOTJ2OC45OGgtMS43MzIxVjY2LjA2NjVoLTQuMDcyNXYzLjgzMjdIMTk4LjgyVjYwLjkyaDEuNzQ1NXYzLjYzaDQuMDcyNVY2MC45MloiLz48cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0yMTUuMzYyNCw2OC4zNjg4djEuNTNoLTYuMjM0OFY2MC45Mmg2LjEyMTZWNjIuNDVoLTQuMzc2MXYyLjE2MjJoMy43ODEydjEuNDE3MmgtMy43ODEydjIuMzM5NFoiLz48cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0yMjQuOTc0LDY5Ljg5OTJWNjMuOTU0NmwtMi4zMTQ3LDQuNDI2NmgtLjk0NzhsLTIuMzE0Ny00LjQyNjZ2NS45NDQ2aC0xLjc0NTVWNjAuOTJoMS44NzIxbDIuNjU1Myw1LjExLDIuNjgxLTUuMTFoMS44NnY4Ljk4WiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTIyOS40NzU2LDY5Ljg5OTJWNjAuOTMyOWgxLjc0NTV2OC45NjYzWiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTIzMy40NDcyLDY1LjM0NmE0LjcyOCw0LjcyOCwwLDAsMSwuMjkxMy0xLjYyNSw0LjUwNzUsNC41MDc1LDAsMCwxLC44NDA5LTEuNDM1Nyw0LjI1LDQuMjUsMCwwLDEsMS4zNDcyLTEuMDI0LDQuMDcsNC4wNywwLDAsMSwxLjgyMDYtLjM5MjIsMy44NzIyLDMuODcyMiwwLDAsMSwyLjA4MS41NDQ0QTMuMzQ0NywzLjM0NDcsMCwwLDEsMjQxLjEyNCw2Mi44M2wtMS4zNC45MjMyYTIuMDY4NSwyLjA2ODUsMCwwLDAtLjM5MjItLjYzOTEsMS45OTc4LDEuOTk3OCwwLDAsMC0uNTI0OS0uNDEwNywyLjM4MzYsMi4zODM2LDAsMCwwLS41ODg2LS4yMjEyLDIuNiwyLjYsMCwwLDAtLjU4MTUtLjA3LDIuMTY4NSwyLjE2ODUsMCwwLDAtMS4wODc4LjI2NTQsMi40NDM0LDIuNDQzNCwwLDAsMC0uNzc3MS42OSwzLjA4MzksMy4wODM5LDAsMCwwLS40NjgzLjk2MTMsMy43NDg4LDMuNzQ4OCwwLDAsMC0uMTU4NSwxLjA2ODMsMy42MTk0LDMuNjE5NCwwLDAsMCwuMTgzMSwxLjE0NDQsMy4wODU4LDMuMDg1OCwwLDAsMCwuNTE4OC45Njc1LDIuNiwyLjYsMCwwLDAsLjgwMzguNjcxLDIuMTExLDIuMTExLDAsMCwwLDEuMDI0MS4yNTIxLDIuNDQ4LDIuNDQ4LDAsMCwwLC41OTM4LS4wNzUxLDIuMjk2OCwyLjI5NjgsMCwwLDAsLjU4ODctLjI0MDgsMi4yNTI3LDIuMjUyNywwLDAsMCwuNTI0OS0uNDI0LDIuMDg4OCwyLjA4ODgsMCwwLDAsLjM5Mi0uNjI1N2wxLjQyODYuODIyMmEyLjYyMTQsMi42MjE0LDAsMCwxLS41ODc3Ljg5MTMsMy43NTU5LDMuNzU1OSwwLDAsMS0uODc4OS42NTE1LDQuNTc2MSw0LjU3NjEsMCwwLDEtMS4wMzc0LjQwNDQsNC4zMjIzLDQuMzIyMywwLDAsMS0xLjA3NDUuMTM5LDMuNjQxNSwzLjY0MTUsMCwwLDEtMS43MTM2LS40MDQ0LDQuNSw0LjUsMCwwLDEtMS4zNDEtMS4wNTYsNC44NTM1LDQuODUzNSwwLDAsMS0uODcyOC0xLjQ3ODlBNC43ODQxLDQuNzg0MSwwLDAsMSwyMzMuNDQ3Miw2NS4zNDZaIi8+PHBhdGggY2xhc3M9ImNscy0zIiBkPSJNMjQyLjMsNjkuODk5MmwzLjU0LTguOThoMS40MTYybDMuNTI5LDguOThIMjQ4Ljk0bC0uODIyMy0yLjIzODVIMjQ0Ljk2OGwtLjgyMTMsMi4yMzg1Wm00LjI0ODUtNy4wOTUyLTEuMjksMy42M2gyLjU0MjFaIi8+PHBhdGggY2xhc3M9ImNscy0zIiBkPSJNMjUyLjYzMTMsNjkuODk5MlY2MC45MmgxLjc0NTV2Ny40NDkzaDQuNTc3OHYxLjUzWiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTI2Ni4zMDIsNjMuMjcyMmEyLjE5MjMsMi4xOTIzLDAsMCwwLS4zMjIyLS4yNDA4LDMuOTcyMywzLjk3MjMsMCwwLDAtLjU2OTEtLjI5NjQsNS4wMjc1LDUuMDI3NSwwLDAsMC0uNzI2Ni0uMjQ3LDMuMjA5MywzLjIwOTMsMCwwLDAtLjc5NzctLjEwMDgsMS43ODQ5LDEuNzg0OSwwLDAsMC0xLjA3NDQuMjY1NC44NzY0Ljg3NjQsMCwwLDAtLjM1NDEuNzQ2Mi43NjQ1Ljc2NDUsMCwwLDAsLjEzMjguNDYxMiwxLjE0NDksMS4xNDQ5LDAsMCwwLC4zODYuMzIzMSwzLjE4MTcsMy4xODE3LDAsMCwwLC42MzgxLjI1MjJxLjM4NTkuMTE0MS44OTIyLjI0MDcuNjU2MS4xNzc2LDEuMTk0OS4zNzg4YTMuMjM3MSwzLjIzNzEsMCwwLDEsLjkxLjUwNjQsMi4wOTcxLDIuMDk3MSwwLDAsMSwuNTc2NC43Mjc2LDIuNDA2OSwyLjQwNjksMCwwLDEsLjIwMTcsMS4wNDI1LDIuNTk3NiwyLjU5NzYsMCwwLDEtLjI3MTcsMS4yMzMsMi4yOTgyLDIuMjk4MiwwLDAsMS0uNzI3Ny44Mjg1LDMuMDk3OCwzLjA5NzgsMCwwLDEtMS4wNjIxLjQ2MjFBNS40MTgsNS40MTgsMCwwLDEsMjY0LjA2MzUsNzBhNi43NDM1LDYuNzQzNSwwLDAsMS0xLjk5NzctLjMwMzYsNi4xNSw2LjE1LDAsMCwxLTEuNzctLjg1OTNsLjc3MDktMS41MDU4YTIuNDM2NywyLjQzNjcsMCwwLDAsLjQxMTcuMjk3NSw1Ljk4MDgsNS45ODA4LDAsMCwwLC43MDE5LjM2NjQsNS4zMjU0LDUuMzI1NCwwLDAsMCwuODk3NS4zMSw0LjA1MjMsNC4wNTIzLDAsMCwwLDEuMDExNi4xMjY1cTEuNDQxOCwwLDEuNDQxOS0uOTIzMWEuNzc3OC43Nzc4LDAsMCwwLS4xNjQ3LS41MDUzLDEuMzgzNiwxLjM4MzYsMCwwLDAtLjQ2ODItLjM1NDEsNC40MSw0LjQxLDAsMCwwLS43MzI4LS4yNzg5cS0uNDMwNi0uMTI1MS0uOTYxMy0uMjY1NWE4LjE1LDguMTUsMCwwLDEtMS4xMi0uMzg0OSwzLjA1NDUsMy4wNTQ1LDAsMCwxLS43OS0uNDg3OSwxLjc4MTUsMS43ODE1LDAsMCwxLS40NzM0LS42NTY2LDIuMzE3MywyLjMxNzMsMCwwLDEtLjE1ODUtLjg5ODUsMi43OTEsMi43OTEsMCwwLDEsLjI1MzItMS4yMTQ0LDIuNDU4NCwyLjQ1ODQsMCwwLDEsLjcwMTktLjg4NTFBMy4xNzg0LDMuMTc4NCwwLDAsMSwyNjIuNjYsNjEuMDRhNC4zMDM5LDQuMzAzOSwwLDAsMSwxLjI3ODMtLjE4MzMsNC45NDE0LDQuOTQxNCwwLDAsMSwxLjc0NDUuMjk3NSw2LjQ4NjIsNi40ODYyLDAsMCwxLDEuMzkxNC43MDE5WiIvPjwvc3ZnPg==" alt="Polywed Construction Chemicals">
+    <div class="meta">Monthly design order for <b>Polywed</b><br>Design retainer with <b>Sarah's Design Studio</b></div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="kicker">Monthly design order <span class="ar" style="margin-inline-start:8px">طلب التصميم الشهري</span></div>
+    <div class="bar-title"><h1>Tick what you need this month. The total updates as you go.</h1></div>
+    <p class="lede">Your retainer includes 30 credits for 1,500 SAR a month. The minimum each month is 1,500 SAR, even if fewer credits are used. Extra credits in the brief cost 50 SAR each.</p>
+    <div class="fields">
+      <div class="field"><label for="f-month">Delivery month</label><input id="f-month" type="month"></div>
+      <div class="field"><label for="f-company">Company</label><input id="f-company" type="text" value="Polywed" autocomplete="organization"></div>
+      <div class="field"><label for="f-name">Your name</label><input id="f-name" type="text" placeholder="Who is sending this order" autocomplete="name"></div>
+    </div>
+    <div class="mode" role="group" aria-label="Order type">
+      <button type="button" data-mode="brief" aria-pressed="true">Monthly brief</button>
+      <button type="button" data-mode="mid" aria-pressed="false">Mid-month request</button>
+    </div>
+    <p class="mode-note" id="mode-note"></p>
+  </div>
+</div>
+
+<main class="wrap layout">
+  <div id="cats"></div>
+
+  <aside class="summary" id="summary" aria-live="polite">
+    <div class="sum-head">
+      <h2 id="s-title">Your order</h2>
+      <div class="sub" id="s-sub">Monthly brief</div>
+    </div>
+    <div class="sum-body">
+      <div class="meter" id="meter">
+        <div class="cap"><span><b id="s-cr" class="num">0</b> credits selected</span><span id="s-cap">of 30 included</span></div>
+        <div class="bar"><i id="s-bar" style="width:0%"></i></div>
+      </div>
+      <div class="picked" id="s-picked"></div>
+      <div class="lines" id="s-lines"></div>
+      <div class="total"><span class="t-label" id="s-tlabel">Total this month</span><span class="t-val num" id="s-total">1,500<small>SAR</small></span></div>
+      <div class="hint" id="s-hint"></div>
+      <div class="field wide"><label for="f-notes">Notes for Sarah</label><textarea id="f-notes" rows="3" placeholder="Dates, product names, launch details"></textarea></div>
+      <div class="attach">
+        <span class="lbl">Attachments</span>
+        <label class="drop" id="drop"><input type="file" id="f-files" multiple hidden><span><b>Add files</b> or drop them here</span><span>Product photos, logos, references, texts</span></label>
+        <div class="files" id="files"></div>
+        <p class="mode-note" style="font-size:12.5px" id="files-note" hidden>Your files are sent to Sarah together with your order PDF. Pictures also appear inside the PDF.</p>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="b-send" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>
+          Send order
+        </button>
+        <button class="btn" id="b-print" type="button">Save as PDF quote</button>
+        <div class="status" id="status" role="status"></div>
+        <button class="link-btn" id="b-reset" type="button">Clear all selections</button>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<div class="mbar" id="mbar">
+  <div><div class="mt num" id="m-total">1,500 SAR</div><div class="ms" id="m-sub">0 of 30 credits</div></div>
+  <a href="#summary">Review &amp; send</a>
+</div>
+
+<dialog class="send" id="dlg" aria-labelledby="d-title">
+  <div class="d-head">
+    <button class="d-close" id="d-close" type="button" aria-label="Close">×</button>
+    <div class="d-steps" id="d-steps"><span data-s="pay">1 · Payment</span><span data-s="send">2 · Send brief</span></div>
+    <h2 id="d-title">Pay to send your brief</h2>
+  </div>
+  <div class="d-body" id="d-pay">
+    <div class="notice"><b>Your brief is sent to Sarah after payment.</b> Each month is paid in full before work begins. Transfer the amount below to the bank account Sarah has shared with you, then come back here to send your brief on WhatsApp and email.</div>
+    <div class="amount"><span><b>Amount to transfer</b><br><span class="mode-note" id="d-for"></span></span><span class="a-val num" id="d-amt"></span></div>
+    <div class="bank" id="d-bank"></div>
+    <label class="confirm"><input type="checkbox" id="d-paid"><span>I have transferred <b id="d-amt2"></b> to Sarah's account.</span></label>
+    <div class="field"><label for="d-ref">Transfer reference number (required)</label><input id="d-ref" type="text" required placeholder="From your bank's transfer confirmation"><span class="mode-note" style="font-size:12.5px">Enter the reference number from your bank transfer to continue.</span></div>
+    <button class="btn primary" id="d-next" type="button" disabled>Continue to send brief</button>
+  </div>
+  <div class="d-body" id="d-send" hidden>
+    <div class="notice" id="d-send-note"></div>
+    <div class="send-btns">
+      <button class="btn primary" id="d-wa" type="button" disabled><span>Send on WhatsApp</span><span class="tick" id="t-wa">Preparing…</span></button>
+      <button class="btn primary" id="d-mail" type="button" disabled><span>Send by email</span><span class="tick" id="t-mail">Preparing…</span></button>
+    </div>
+    <p class="mode-note" id="d-how">Your order PDF (with your notes and pictures) and your attached files are added automatically. Choose Sarah's chat in WhatsApp, or send the email to <b>sarahrabee3.designer@gmail.com</b>, and attach your transfer receipt if you have it.</p>
+    <div class="done-box" id="d-done" hidden><div class="big">Thank you</div><p>Sarah has your brief. She will confirm once the payment is received and start work on schedule.</p></div>
+    <button class="link-btn" id="d-back" type="button">Back to payment details</button>
+  </div>
+</dialog>
+
+<section class="inbox" id="inbox" hidden>
+  <div class="wrap">
+    <div class="kicker">Only you can see this, Sarah</div>
+    <div class="bar-title"><h2>Orders received</h2></div>
+    <div class="orders" id="orders"><p class="mode-note">No orders yet. They appear here when Polywed sends a brief. Briefs also arrive on your WhatsApp and email.</p></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div><b>Sarah's Design Studio</b><br>Polywed monthly design retainer</div>
+    <div>WhatsApp <a href="https://wa.me/966556204075" style="color:inherit">+966 55 620 4075</a> · <a href="mailto:sarahrabee3.designer@gmail.com" style="color:inherit">sarahrabee3.designer@gmail.com</a><br>All prices in Saudi riyals (SAR), excluding VAT where applicable.<br>Unused credits end at month end. Briefs are due one month before delivery.</div>
+  </div>
+</footer>
+
+<script>
+const INCLUDED = 30, BASE = 1500, RATE_BRIEF = 50, RATE_MID = 80;
+const SARAH_WA = "966556204075", SARAH_EMAIL = "sarahrabee3.designer@gmail.com";
+// Sarah's transfer details, shown on the payment step
+const BANK = [];
+const CATS = [
+  { code: "SM", name: "Social media", color: "var(--c-sm)", items: [
+    ["SM1", "Static post", "Single frame, English or Arabic", 3],
+    ["SM2", "Reel, 15–30 seconds", "Motion graphics from brand assets and product images", 6],
+    ["SM3", "Story or format resize", "A finished design adapted to 9:16, 1:1 or 16:9", 1],
+  ]},
+  { code: "ST", name: "Stationery", color: "var(--c-st)", items: [
+    ["ST1", "Email signatures", "Set of 5 people, English and Arabic, ready to install", 2],
+    ["ST2", "Business cards", "Set of 5 people, on the existing card design", 2],
+    ["ST3", "Envelope", "DL or C4, print-ready", 3],
+    ["ST4", "A4 letterhead", "Print file plus editable Word template", 4],
+    ["ST5", "A4 template", "Quotation, product data sheet or certificate", 5],
+  ]},
+  { code: "PR", name: "Promotional material", color: "var(--c-pr)", items: [
+    ["PR1", "Roll-up or pop-up stand", "Print-ready", 6],
+    ["PR2", "Paper holder", "Brochure display header and panels", 4],
+    ["PR3", "Gift bag", "On the printer's template", 6],
+  ]},
+  { code: "PK", name: "Packaging adaptations", color: "var(--c-pk)", items: [
+    ["PK1", "Paper bag, new product", "On the existing bag layout", 6],
+    ["PK2", "Plastic bucket, generic", "Shared design for several products", 6],
+    ["PK3", "Plastic bucket, fixed", "Artwork for one product", 6],
+    ["PK4", "Carton box, new product", "On an existing dieline", 6],
+    ["PK5", "Jerry can label", "Front and back", 5],
+    ["PK6", "Jug label, 5 kg or 4 kg", "Front and back, one size", 5],
+    ["PK7", "Pack size resize", "Existing artwork to another size", 1],
+    ["PK8", "Text or data update", "Codes, specs or barcode on existing packaging", 1],
+  ]},
+];
+const ITEMS = CATS.flatMap(c => c.items.map(([code, name, note, cr]) => ({ code, name, note, cr })));
+const $ = id => document.getElementById(id);
+const sar = n => n.toLocaleString("en-US") + " SAR";
+const esc = s => String(s).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+
+// state: qty per item code, order type, header fields; a draft is kept in this browser only
+const files = [];   // {file, name, size, img: {url, w, h} | null}
+const pay = { paid: false, ref: "", wa: false, mail: false };
+let readyPdf = null;   // the order PDF as a File, built when the send step opens
+let state = { mode: "brief", qty: {}, month: "", company: "Polywed", name: "", notes: "" };
+const DRAFT_KEY = "polywed-order-draft";
+try { const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null"); if (d && typeof d === "object") state = { ...state, ...d, qty: d.qty || {} }; } catch (e) {}
+if (!state.month) { const n = new Date(); n.setMonth(n.getMonth() + 1); state.month = n.toISOString().slice(0, 7); }
+function saveDraft() { try { localStorage.setItem(DRAFT_KEY, JSON.stringify(state)); } catch (e) {} }
+
+$("cats").innerHTML = CATS.map(c => `
+  <div class="cat" style="--c:${c.color}" data-cat="${c.code}">
+    <div class="cat-head"><div class="code-tab">${c.code}</div><h3>${c.name}</h3></div>
+    <div class="rows">
+      ${c.items.map(([code, name, note, cr]) => `
+        <div class="row" data-code="${code}">
+          <input type="checkbox" aria-label="${esc(name)}">
+          <span class="code">${code}</span>
+          <span class="name">${esc(name)}<small>${esc(note)}</small></span>
+          <span class="cr num">${cr} <small>cr</small></span>
+          <span class="step">
+            <button type="button" data-d="-1" aria-label="Fewer ${esc(name)}">−</button>
+            <input type="number" min="0" max="99" inputmode="numeric" aria-label="Quantity of ${esc(name)}">
+            <button type="button" data-d="1" aria-label="More ${esc(name)}">+</button>
+          </span>
+        </div>`).join("")}
+    </div>
+  </div>`).join("");
+
+function setQty(code, q) {
+  q = Math.max(0, Math.min(99, Math.floor(Number(q) || 0)));
+  if (q) state.qty[code] = q; else delete state.qty[code];
+  update();
+}
+
+$("cats").addEventListener("click", e => {
+  const row = e.target.closest(".row"); if (!row) return;
+  const code = row.dataset.code, cur = state.qty[code] || 0;
+  const b = e.target.closest("button[data-d]");
+  if (b) { setQty(code, cur + Number(b.dataset.d)); return; }
+  if (e.target.matches("input[type=number]")) return;
+  if (e.target.matches("input[type=checkbox]")) { setQty(code, e.target.checked ? Math.max(cur, 1) : 0); return; }
+  setQty(code, cur ? 0 : 1);
+});
+$("cats").addEventListener("input", e => {
+  if (!e.target.matches("input[type=number]")) return;
+  setQty(e.target.closest(".row").dataset.code, e.target.value);
+});
+
+document.querySelectorAll(".mode button").forEach(b => b.addEventListener("click", () => { state.mode = b.dataset.mode; update(); }));
+[["f-month", "month"], ["f-company", "company"], ["f-name", "name"], ["f-notes", "notes"]].forEach(([id, k]) => {
+  $(id).value = state[k] || "";
+  $(id).addEventListener("input", () => { state[k] = $(id).value; update(); });
+});
+
+function monthLabel(m) {
+  if (!/^\d{4}-\d{2}$/.test(m || "")) return "this month";
+  const [y, mo] = m.split("-").map(Number);
+  return new Date(y, mo - 1, 1).toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+}
+function nextMonthLabel(m) {
+  if (!/^\d{4}-\d{2}$/.test(m || "")) return "next month";
+  const [y, mo] = m.split("-").map(Number);
+  return new Date(y, mo, 1).toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+}
+
+function briefDue(m) {
+  if (!/^\d{4}-\d{2}$/.test(m || "")) return "";
+  const [y, mo] = m.split("-").map(Number), due = new Date(y, mo - 2, 1);
+  if (due < new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate())) return "";
+  return `, so the ${monthLabel(m)} brief is due by ${due.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}`;
+}
+
+// the pricing rules from the retainer menu
+function calc() {
+  const picked = ITEMS.filter(i => state.qty[i.code]).map(i => ({ ...i, qty: state.qty[i.code], total: i.cr * state.qty[i.code] }));
+  const credits = picked.reduce((s, i) => s + i.total, 0);
+  if (state.mode === "mid") {
+    return { picked, credits, total: credits * RATE_MID, lines: [
+      ["Mid-month credits", `${credits} × ${RATE_MID} SAR`],
+    ] };
+  }
+  const extra = Math.max(0, credits - INCLUDED), unused = Math.max(0, INCLUDED - credits);
+  const lines = [["Monthly retainer, 30 credits", sar(BASE)]];
+  if (extra) lines.push([`Extra ${extra} credit${extra > 1 ? "s" : ""} × ${RATE_BRIEF} SAR`, sar(extra * RATE_BRIEF)]);
+  return { picked, credits, extra, unused, total: BASE + extra * RATE_BRIEF, lines };
+}
+
+function summaryText(r) {
+  const mid = state.mode === "mid";
+  const out = [
+    `${state.company || "Polywed"} design order: ${monthLabel(state.month)}`,
+    mid ? "Type: mid-month request (not in the brief)" : "Type: monthly brief",
+  ];
+  if (state.name) out.push(`From: ${state.name}`);
+  out.push("", "Items:");
+  if (!r.picked.length) out.push("(none selected)");
+  r.picked.forEach(i => out.push(`- ${i.code} ${i.name} × ${i.qty} = ${i.total} credits`));
+  out.push("");
+  if (mid) {
+    out.push(`Credits: ${r.credits} × ${RATE_MID} SAR`, `Total: ${sar(r.total)}, added to the ${nextMonthLabel(state.month)} invoice`);
+  } else {
+    out.push(`Credits: ${r.credits} of ${INCLUDED} included`);
+    r.lines.forEach(([a, b]) => out.push(`${a}: ${b}`));
+    out.push(`Total for ${monthLabel(state.month)}: ${sar(r.total)}`);
+    if (r.unused) out.push(`(${r.unused} unused credits end at month end)`);
+  }
+  out.push("Prices exclude VAT where applicable.");
+  if (files.length) {
+    out.push("", "Attachments:");
+    files.forEach(f => out.push(`- ${f.name}`));
+  }
+  out.push("", `Order PDF: ${pdfName()}`);
+  if (!mid && pay.paid) out.push(`Payment: ${sar(r.total)} transferred${pay.ref.trim() ? " (reference: " + pay.ref.trim() + ")" : ""}. Receipt attached on WhatsApp.`);
+  if (state.notes.trim()) out.push("", "Notes: " + state.notes.trim());
+  return out.join("\n");
+}
+
+function update() {
+  const r = calc(), mid = state.mode === "mid";
+  document.querySelectorAll(".row").forEach(row => {
+    const q = state.qty[row.dataset.code] || 0;
+    row.classList.toggle("on", q > 0);
+    row.querySelector("input[type=checkbox]").checked = q > 0;
+    const inp = row.querySelector("input[type=number]");
+    if (document.activeElement !== inp) inp.value = q;
+    row.querySelector('button[data-d="-1"]').disabled = q === 0;
+  });
+  document.querySelectorAll(".cat").forEach(c => c.classList.toggle("none", !c.querySelector(".row.on")));
+  document.querySelectorAll(".mode button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.mode === state.mode)));
+
+  $("mode-note").textContent = mid
+    ? `For work you need during the month that was not in the brief. These credits cost ${RATE_MID} SAR each and are added to next month's invoice.`
+    : `Plan the whole month here. Briefs are due one month before delivery${briefDue(state.month)}.`;
+  $("s-sub").textContent = `${mid ? "Mid-month request" : "Monthly brief"} · ${monthLabel(state.month)}`;
+  $("s-cr").textContent = r.credits;
+  $("s-cap").textContent = mid ? `× ${RATE_MID} SAR each` : `of ${INCLUDED} included`;
+  const pct = mid ? (r.credits ? 100 : 0) : Math.min(100, (r.credits / INCLUDED) * 100);
+  $("s-bar").style.width = pct + "%";
+  $("s-bar").classList.toggle("over", mid || r.credits > INCLUDED);
+
+  $("s-picked").innerHTML = r.picked.length
+    ? r.picked.map(i => `<div><span>${esc(i.name)} × ${i.qty}</span><span>${i.total} cr</span></div>`).join("")
+    : `<div class="empty">Nothing selected yet. Tick an item to add it.</div>`;
+  $("s-lines").innerHTML = r.lines.map(([a, b]) => `<div><span class="muted">${esc(a)}</span><span class="num">${esc(b)}</span></div>`).join("");
+  $("s-tlabel").textContent = mid ? `Added to ${nextMonthLabel(state.month)} invoice` : `Total for ${monthLabel(state.month)}`;
+  $("s-total").innerHTML = `${r.total.toLocaleString("en-US")}<small>SAR</small>`;
+
+  const hint = $("s-hint");
+  hint.classList.remove("warn");
+  if (mid) hint.textContent = "Mid-month requests are billed on next month's invoice, on top of the monthly retainer.";
+  else if (r.credits === 0) hint.textContent = "The minimum monthly payment is 1,500 SAR, even if no credits are used.";
+  else if (r.unused) hint.textContent = `You have ${r.unused} credit${r.unused > 1 ? "s" : ""} left this month. Unused credits end at month end and do not carry over.`;
+  else if (r.extra) { hint.textContent = `${r.extra} credit${r.extra > 1 ? "s" : ""} over the 30 included, at ${RATE_BRIEF} SAR each.`; hint.classList.add("warn"); }
+  else hint.textContent = "Exactly 30 credits. The month is fully used.";
+
+  $("m-total").textContent = sar(r.total);
+  $("m-sub").textContent = mid ? `${r.credits} credits, next month's invoice` : `${r.credits} of ${INCLUDED} credits`;
+
+  saveDraft();
+}
+
+function flash(msg, err) { const s = $("status"); s.textContent = msg; s.classList.toggle("err", !!err); }
+
+$("b-print").addEventListener("click", () => window.print());
+
+// ---- attachments: pictures are shrunk and embedded in the order PDF; other files are listed by name
+const isImg = f => /^image\/(png|jpe?g|webp|gif|heic|heif)$/i.test(f.type) || /\.(png|jpe?g|webp|gif|heic|heif)$/i.test(f.name);
+function shrinkImage(file) {
+  return new Promise(res => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      try {
+        const s = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight));
+        const c = document.createElement("canvas"); c.width = Math.round(img.naturalWidth * s); c.height = Math.round(img.naturalHeight * s);
+        const g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height);
+        res({ url: c.toDataURL("image/jpeg", 0.82), w: c.width, h: c.height });
+      } catch (e) { res(null); }
+      URL.revokeObjectURL(url);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); res(null); };
+    img.src = url;
+  });
+}
+const kb = n => n > 1048576 ? (n / 1048576).toFixed(1) + " MB" : Math.max(1, Math.round(n / 1024)) + " KB";
+async function addFiles(list) {
+  for (const f of list) {
+    if (files.length >= 15) { flash("Up to 15 files per order.", true); break; }
+    files.push({ file: f, name: f.name, size: f.size, img: isImg(f) ? await shrinkImage(f) : null });
+  }
+  renderFiles(); update();
+}
+function renderFiles() {
+  $("files").innerHTML = files.map((f, i) => `<div>${f.img ? `<img src="${f.img.url}" alt="">` : `<span class="ext">${esc((f.name.split(".").pop() || "file").slice(0, 4))}</span>`}<span class="fn">${esc(f.name)}<small>${kb(f.size)} · ${f.img ? "also shown in the PDF" : "sent with your order"}</small></span><button type="button" data-i="${i}" aria-label="Remove ${esc(f.name)}">×</button></div>`).join("");
+  $("files-note").hidden = !files.length;
+}
+$("f-files").addEventListener("change", e => { addFiles([...e.target.files]); e.target.value = ""; });
+$("files").addEventListener("click", e => { const b = e.target.closest("button[data-i]"); if (b) { files.splice(Number(b.dataset.i), 1); renderFiles(); update(); } });
+const drop = $("drop");
+["dragenter", "dragover"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave", "drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", e => { if (e.dataTransfer && e.dataTransfer.files.length) addFiles([...e.dataTransfer.files]); });
+
+const dlg = $("dlg");
+let dbRef = null;   // set when the shared store is usable
+const links = { wa: "", mail: "" };
+function sendLinks() {
+  const txt = summaryText(calc());
+  const subject = `${state.company || "Polywed"} design ${state.mode === "mid" ? "mid-month request" : "brief"}: ${monthLabel(state.month)}`;
+  links.wa = `https://wa.me/${SARAH_WA}?text=` + encodeURIComponent(txt);
+  links.mail = `mailto:${SARAH_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(txt)}`;
+}
+function showStep(step) {
+  const mid = state.mode === "mid";
+  $("d-pay").hidden = step !== "pay"; $("d-send").hidden = step !== "send";
+  document.querySelectorAll("#d-steps span").forEach(s => {
+    s.className = s.dataset.s === step ? "on" : (step === "send" && s.dataset.s === "pay" && !mid ? "done" : "");
+    s.hidden = mid && s.dataset.s === "pay";
+  });
+  $("d-title").textContent = step === "pay" ? "Pay to send your brief" : (mid ? "Send your mid-month request" : "Send your brief to Sarah");
+  $("d-back").hidden = mid;
+  $("d-send-note").innerHTML = mid
+    ? `<b>No payment now.</b> This request is ${esc(sar(calc().total))} and is added to next month's invoice. Send it to Sarah below.`
+    : `<b>Payment noted.</b> Now send your brief to Sarah. She receives it with your payment details.`;
+  sendLinks(); markSent();
+  if (step === "send") preparePdf();
+}
+function markSent() {
+  const ready = !!readyPdf;
+  $("d-wa").disabled = $("d-mail").disabled = !ready;
+  $("t-wa").textContent = pay.wa ? "✓ Sent" : (ready ? "PDF attached" : "Preparing…"); $("d-wa").classList.toggle("sent", pay.wa);
+  $("t-mail").textContent = pay.mail ? "✓ Sent" : (ready ? "PDF attached" : "Preparing…"); $("d-mail").classList.toggle("sent", pay.mail);
+  $("d-done").hidden = !(pay.wa || pay.mail);
+}
+$("b-send").addEventListener("click", () => {
+  const r = calc();
+  if (!r.picked.length) { flash("Tick at least one item first.", true); return; }
+  if (!state.name.trim()) { flash("Please add your name at the top first.", true); $("f-name").focus(); return; }
+  flash("");
+  Object.assign(pay, { paid: false, wa: false, mail: false }); readyPdf = null;
+  $("d-paid").checked = false; $("d-ref").value = ""; pay.ref = ""; $("d-next").disabled = true;
+  $("d-amt").textContent = sar(r.total); $("d-amt2").textContent = sar(r.total);
+  $("d-for").textContent = `${monthLabel(state.month)} · ${r.credits} credits`;
+  $("d-bank").innerHTML = BANK.map(([k, v], i) => `<div><span class="k">${esc(k)}</span><span class="v${v ? "" : " missing"}">${v ? esc(v) : "To be added"}</span><button class="copy" type="button" data-i="${i}" ${v ? "" : "disabled"}>Copy</button></div>`).join("")
+    + `<div><span class="k">Amount</span><span class="v">${r.total}</span><button class="copy" type="button" data-v="${r.total}">Copy</button></div>`;
+  showStep(state.mode === "mid" ? "send" : "pay");
+  if (state.mode === "mid") saveOrder();
+  dlg.showModal();
+});
+$("d-bank").addEventListener("click", async e => {
+  const b = e.target.closest(".copy"); if (!b) return;
+  let v = b.dataset.v ?? BANK[Number(b.dataset.i)][1];
+  if (BANK[Number(b.dataset.i)] && BANK[Number(b.dataset.i)][0] === "IBAN") v = v.replace(/\s+/g, "");
+  try { await navigator.clipboard.writeText(v); }
+  catch (err) { const ta = document.createElement("textarea"); ta.value = v; dlg.appendChild(ta); ta.select(); try { document.execCommand("copy"); } catch (e2) {} ta.remove(); }
+  b.textContent = "Copied"; b.classList.add("ok");
+  setTimeout(() => { b.textContent = "Copy"; b.classList.remove("ok"); }, 1600);
+});
+function canContinue() { $("d-next").disabled = !(pay.paid && pay.ref.trim().length >= 3); }
+$("d-paid").addEventListener("change", () => { pay.paid = $("d-paid").checked; canContinue(); });
+$("d-ref").addEventListener("input", () => { pay.ref = $("d-ref").value; canContinue(); });
+$("d-next").addEventListener("click", () => { showStep("send"); saveOrder(); });
+$("d-back").addEventListener("click", () => showStep("pay"));
+// ---- order PDF, built in the browser
+function pdfName() {
+  const m = /^\d{4}-\d{2}$/.test(state.month || "") ? state.month : "order";
+  return `Polywed-design-${state.mode === "mid" ? "mid-month-request" : "brief"}-${m}.pdf`;
+}
+let logoPng = null;
+function loadLogo() {
+  if (logoPng) return Promise.resolve(logoPng);
+  return new Promise(res => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const c = document.createElement("canvas"), s = 600 / img.naturalWidth;
+        c.width = 600; c.height = Math.round(img.naturalHeight * s);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        logoPng = { url: c.toDataURL("image/png"), ratio: c.height / c.width };
+      } catch (e) { logoPng = null; }
+      res(logoPng);
+    };
+    img.onerror = () => res(null);
+    img.src = document.querySelector(".top img").src;
+  });
+}
+async function buildPdf() {
+  const { jsPDF } = window.jspdf;
+  const r = calc(), mid = state.mode === "mid";
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const W = 210, M = 16, TEAL = [0, 125, 112], INK = [43, 47, 46], MUTED = [100, 107, 105], LINE = [221, 227, 225];
+  const logo = await loadLogo();
+  if (logo) doc.addImage(logo.url, "PNG", M, 12, 46, 46 * logo.ratio);
+  doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(...MUTED);
+  doc.text(["Design retainer with Sarah's Design Studio", `Sent ${new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}`], W - M, 16, { align: "right" });
+  let y = 34;
+  doc.setFillColor(...TEAL); doc.rect(0, y, W, 22, "F");
+  doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(17);
+  doc.text(`${mid ? "Mid-month request" : "Monthly design brief"}: ${monthLabel(state.month)}`, M, y + 10);
+  doc.setFont("helvetica", "normal"); doc.setFontSize(10);
+  doc.text(`${state.company || "Polywed"}${state.name ? " · from " + state.name : ""}`, M, y + 17);
+  y += 32;
+  // items table
+  doc.setFontSize(8.5); doc.setTextColor(...MUTED); doc.setFont("helvetica", "bold");
+  doc.text("CODE", M, y); doc.text("ITEM", M + 18, y); doc.text("QTY", 150, y, { align: "right" }); doc.text("CREDITS", W - M, y, { align: "right" });
+  y += 2; doc.setDrawColor(...TEAL); doc.setLineWidth(0.8); doc.line(M, y, W - M, y); y += 6;
+  doc.setLineWidth(0.2); doc.setDrawColor(...LINE);
+  r.picked.forEach(i => {
+    if (y > 260) { doc.addPage(); y = 20; }
+    doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.setTextColor(...TEAL); doc.text(i.code, M, y);
+    doc.setTextColor(...INK); doc.text(i.name, M + 18, y);
+    doc.setFont("helvetica", "normal"); doc.setFontSize(8.5); doc.setTextColor(...MUTED); doc.text(i.note, M + 18, y + 4.2);
+    doc.setFontSize(10); doc.setTextColor(...INK); doc.text(String(i.qty), 150, y, { align: "right" });
+    doc.setFont("helvetica", "bold"); doc.text(String(i.total), W - M, y, { align: "right" });
+    y += 7.5; doc.line(M, y, W - M, y); y += 5.5;
+  });
+  // totals
+  y += 2;
+  const line = (a, b, bold) => { doc.setFont("helvetica", bold ? "bold" : "normal"); doc.setTextColor(...(bold ? INK : MUTED)); doc.text(a, 112, y); doc.text(b, W - M, y, { align: "right" }); y += 6; };
+  doc.setFontSize(10);
+  line(mid ? "Credits" : "Credits used", mid ? `${r.credits} x ${RATE_MID} SAR` : `${r.credits} of ${INCLUDED} included`);
+  r.lines.forEach(([a, b]) => line(a.replace("×", "x"), b.replace("×", "x")));
+  y += 1; doc.setDrawColor(...INK); doc.setLineWidth(0.6); doc.line(112, y - 3, W - M, y - 3); y += 4;
+  doc.setFont("helvetica", "bold"); doc.setFontSize(12); doc.setTextColor(...INK);
+  doc.text(mid ? `Added to ${nextMonthLabel(state.month)} invoice` : `Total for ${monthLabel(state.month)}`, 112, y);
+  doc.setFontSize(18); doc.setTextColor(...TEAL); doc.text(sar(r.total), W - M, y + 1, { align: "right" });
+  y += 12;
+  // payment
+  doc.setFillColor(244, 247, 246); doc.rect(M, y, W - 2 * M, mid ? 14 : 22, "F");
+  doc.setFontSize(10); doc.setTextColor(...INK); doc.setFont("helvetica", "bold");
+  if (mid) {
+    doc.text("No payment now", M + 5, y + 6);
+    doc.setFont("helvetica", "normal"); doc.setTextColor(...MUTED); doc.text("Mid-month requests are billed on next month's invoice.", M + 5, y + 11);
+    y += 20;
+  } else {
+    doc.text(pay.paid ? "Payment reported by client" : "Payment not reported", M + 5, y + 6);
+    doc.setFont("helvetica", "normal"); doc.setTextColor(...MUTED);
+    doc.text(`${sar(r.total)} to Sarah's Design Studio`, M + 5, y + 11.5);
+    doc.text(pay.ref.trim() ? `Transfer reference: ${pay.ref.trim()}` : "Transfer reference: not given", M + 5, y + 17);
+    y += 28;
+  }
+  if (state.notes.trim()) {
+    doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.setTextColor(...INK); doc.text("Notes", M, y); y += 5;
+    doc.setFont("helvetica", "normal"); doc.setTextColor(...MUTED);
+    const lines = doc.splitTextToSize(state.notes.trim(), W - 2 * M); doc.text(lines, M, y); y += lines.length * 4.6 + 4;
+  }
+  doc.setFontSize(8.5); doc.setTextColor(...MUTED);
+  doc.text(`Sarah's Design Studio · WhatsApp +966 55 620 4075 · ${SARAH_EMAIL}`, M, 280);
+  doc.text("Prices in SAR, excluding VAT where applicable. Unused credits end at month end.", M, 285);
+  doc.setDrawColor(10, 174, 154); doc.setLineWidth(1.2); doc.line(0, 290, W, 290);
+  files.filter(f => f.img).forEach((f, n) => {
+    doc.addPage();
+    doc.setFillColor(...TEAL); doc.rect(0, 0, W, 16, "F");
+    doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(11);
+    doc.text(`Attachment ${n + 1}: ${f.name}`.slice(0, 90), M, 10.5);
+    const maxW = W - 2 * M, maxH = 297 - 16 - 2 * M, s = Math.min(maxW / f.img.w, maxH / f.img.h);
+    const w = f.img.w * s, h = f.img.h * s;
+    doc.addImage(f.img.url, "JPEG", (W - w) / 2, 16 + M, w, h);
+  });
+  const other = files.filter(f => !f.img);
+  if (other.length) {
+    doc.setPage(1);
+    doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor(...MUTED);
+    doc.text(`Files sent with this order: ${other.map(f => f.name).join(", ")}`.slice(0, 140), M, 274);
+  }
+  return doc.output("blob");
+}
+// The PDF is built ahead of time so a press can hand it to the share sheet straight away
+// (phones and browsers only allow sharing directly inside the press).
+async function preparePdf() {
+  readyPdf = null; markSent();
+  if (!window.jspdf) { flashD("The PDF tool didn't load. Check your internet connection, then close and press Send order again."); return; }
+  try { readyPdf = new File([await buildPdf()], pdfName(), { type: "application/pdf" }); }
+  catch (e) { flashD("Couldn't make the order PDF. Please close and press Send order again."); }
+  markSent();
+}
+function shareFiles() { return [readyPdf, ...files.filter(f => !f.img).map(f => f.file), ...files.filter(f => f.img).map(f => f.file)]; }
+function canShareFiles(list) { try { return !!(navigator.canShare && navigator.share && navigator.canShare({ files: list })); } catch (e) { return false; } }
+async function saveFile(file) {
+  const dl = window.claude && typeof window.claude.use === "function" ? await window.claude.use("downloads") : null;
+  if (dl) { try { await dl.save({ filename: file.name, data: file }); return; } catch (e) { if (e && e.code === "declined") return; } }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(file); a.download = file.name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+function flashD(msg) { $("d-send-note").innerHTML = `<b>${esc(msg)}</b>`; }
+async function send(channel) {
+  if (!readyPdf) return;
+  const list = shareFiles(), txt = summaryText(calc());
+  // the PDF already holds the pictures; only send the originals too when the share sheet can carry them
+  const shareList = canShareFiles(list) ? list : (canShareFiles([readyPdf]) ? [readyPdf] : null);
+  if (shareList) {
+    try {
+      await navigator.share({ files: shareList, title: `${state.company || "Polywed"} design order: ${monthLabel(state.month)}`, text: channel === "mail" ? `To: ${SARAH_EMAIL}\n\n${txt}` : txt });
+      pay[channel] = true; markSent(); return;
+    } catch (e) {
+      if (e && e.name === "AbortError") return;   // the client closed the share sheet
+    }
+  }
+  // no file sharing in this browser: open the app with the message, and save the PDF for them to attach
+  if (channel === "wa") window.open(links.wa, "_blank", "noopener");
+  else { const a = document.createElement("a"); a.href = links.mail; a.style.display = "none"; document.body.appendChild(a); a.click(); a.remove(); }
+  await saveFile(readyPdf);
+  $("d-how").innerHTML = `This browser can't attach files by itself, so your order PDF was saved to your device as <b>${esc(readyPdf.name)}</b>. Please attach it${files.some(f => !f.img) ? " and your other files" : ""} to the message before you press send.`;
+  pay[channel] = true; markSent();
+}
+$("d-wa").addEventListener("click", () => send("wa"));
+$("d-mail").addEventListener("click", () => send("mail"));
+$("d-close").addEventListener("click", () => dlg.close());
+dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+
+async function saveOrder() {
+  if (!dbRef) return;
+  const r = calc();
+  try {
+    await dbRef.collection("orders").add({
+      createdAt: Date.now(), month: state.month, company: state.company, name: state.name,
+      notes: state.notes, mode: state.mode, credits: r.credits, total: r.total,
+      paymentReported: state.mode !== "mid" && pay.paid, paymentRef: pay.ref.trim(),
+      items: r.picked.map(i => ({ code: i.code, name: i.name, qty: i.qty, credits: i.total })),
+    });
+  } catch (e) { if (e && e.code === "invalid_argument") dbRef = null; }
+}
+$("b-reset").addEventListener("click", () => { files.length = 0; renderFiles(); state.qty = {}; state.notes = ""; $("f-notes").value = ""; update(); flash(""); });
+
+update();
+
+// Sending straight to Sarah and her inbox light up only where the viewer can use the shared store.
+(async () => {
+  const use = n => (window.claude && typeof window.claude.use === "function") ? window.claude.use(n) : Promise.resolve(null);
+  const [db, user] = await Promise.all([use("db"), use("user")]);
+  if (!db) return;
+  const isOwner = user ? user.isOwner() : false;
+  const canWrite = user ? user.can("data.write") : null;
+  if (canWrite !== false || isOwner) dbRef = db;
+  if (!isOwner) return;
+  $("inbox").hidden = false;
+  db.collection("orders").orderBy("createdAt", "desc").limit(100).onSnapshot(snap => renderOrders(snap.docs, db), () => {});
+})();
+
+function renderOrders(docs, db) {
+  const box = $("orders");
+  if (!docs.length) { box.innerHTML = `<p class="mode-note">No orders yet. They appear here when Polywed sends a brief.</p>`; return; }
+  box.innerHTML = "";
+  docs.forEach(d => {
+    const o = d.data() || {};
+    const el = document.createElement("div"); el.className = "order";
+    const top = document.createElement("div"); top.className = "order-top";
+    const t = document.createElement("b"); t.textContent = `${o.company || "Polywed"} · ${monthLabel(o.month)}`;
+    const tag = document.createElement("span"); tag.className = "tag" + (o.mode === "mid" ? " mid" : ""); tag.textContent = o.mode === "mid" ? "Mid-month" : "Brief";
+    t.appendChild(tag);
+    const amt = document.createElement("span"); amt.className = "amt num"; amt.textContent = sar(Number(o.total) || 0);
+    top.append(t, amt);
+    const meta = document.createElement("div"); meta.className = "meta2";
+    meta.textContent = `${o.mode !== "mid" ? (o.paymentReported ? "Payment reported" + (o.paymentRef ? " (ref " + o.paymentRef + ")" : "") + " · " : "No payment reported · ") : ""}${o.name ? "From " + o.name + " · " : ""}${Number(o.credits) || 0} credits · sent ${o.createdAt ? new Date(o.createdAt).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" }) : ""}`;
+    const ul = document.createElement("ul");
+    (Array.isArray(o.items) ? o.items : []).forEach(i => { const li = document.createElement("li"); li.textContent = `${i.code} ${i.name} × ${i.qty} (${i.credits} cr)`; ul.appendChild(li); });
+    el.append(top, meta, ul);
+    if (o.notes) { const n = document.createElement("div"); n.className = "meta2"; n.textContent = "Notes: " + o.notes; el.appendChild(n); }
+    const del = document.createElement("button"); del.className = "link-btn"; del.style.justifySelf = "start"; del.textContent = "Remove this order";
+    del.addEventListener("click", () => { if (confirm("Remove this order from the list?")) db.doc("orders/" + d.id).delete().catch(() => {}); });
+    el.appendChild(del);
+    box.appendChild(el);
+  });
+}
+</script>
+
+</body>
+</html>
