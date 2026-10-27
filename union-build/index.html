@@ -10,17 +10,17 @@
 /* Layout: one calm column of numbered sections; a sticky progress bar; a summary + send step at the end. */
 :root{
   --bg:#f5f6f9; --surface:#ffffff; --fg:#1c1e26; --muted:#5d6273; --line:#dcdfe8;
-  --accent:#2f3e8f; --accent-soft:#e7eaf7; --on-accent:#ffffff; --ok:#1f7a5c;
+  --accent:#7a4f0c; --accent-soft:#f6ecd9; --on-accent:#ffffff; --ok:#1f7a5c;
   --display:"Archivo","Arial Narrow",system-ui,sans-serif;
   --body:"IBM Plex Sans",system-ui,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#13151c; --surface:#1b1e29; --fg:#e8eaf1; --muted:#a3a8b9; --line:#2e3243;
-  --accent:#9aa8f2; --accent-soft:#262c4b; --on-accent:#10131f; --ok:#6fd1aa; color-scheme:dark}}
+  --accent:#e2b55c; --accent-soft:#3a2e18; --on-accent:#1a1408; --ok:#6fd1aa; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#13151c; --surface:#1b1e29; --fg:#e8eaf1; --muted:#a3a8b9; --line:#2e3243;
-  --accent:#9aa8f2; --accent-soft:#262c4b; --on-accent:#10131f; --ok:#6fd1aa; color-scheme:dark}
+  --accent:#e2b55c; --accent-soft:#3a2e18; --on-accent:#1a1408; --ok:#6fd1aa; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--fg);font:15px/1.55 var(--body);margin:0;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
@@ -81,12 +81,16 @@ footer{font-size:13px;color:var(--muted)}
 
   <div class="send" id="send">
     <h2>Send your answers</h2>
-    <p class="muted">Check the summary, then send it to Sarah by WhatsApp or email. If a button doesn't open your app, press "Copy answers" and paste them into a message.</p>
+    <p class="muted">Check the summary, then choose how to send it. Your answers are turned into a PDF and sent to Sarah.</p>
     <pre id="summary"></pre>
     <div class="btns">
-      <button type="button" id="copy">Copy answers</button>
-      <a class="btn ghost" id="wa" href="#" target="_blank" rel="noopener">Send by WhatsApp</a>
-      <a class="btn ghost" id="mail" href="#">Send by email</a>
+      <button type="button" id="wa">Send PDF by WhatsApp</button>
+      <button type="button" id="mail">Send PDF by email</button>
+    </div>
+    <p class="hint" id="howto">On a phone, your share menu opens: pick WhatsApp and Sarah's chat, or your email app and Sarah's address. On a computer, the PDF downloads and a message to Sarah opens: attach the PDF and press send.</p>
+    <div class="btns">
+      <button type="button" class="ghost" id="pdf">Download PDF only</button>
+      <button type="button" class="ghost" id="copy">Copy answers as text</button>
       <button type="button" class="ghost" id="reset">Clear all answers</button>
     </div>
     <span class="toast" id="toast" hidden></span>
@@ -96,6 +100,7 @@ footer{font-size:13px;color:var(--muted)}
   <footer>Questions? Message Sarah on WhatsApp at +966 55 620 4075.</footer>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 const ADVISE = "Not sure, please advise";
 const S = [
@@ -123,11 +128,11 @@ const S = [
   {id:"lang", type:"single", label:"Language priority on packaging and posts", o:["Arabic first","English first","Equal Arabic and English"]}
  ]},
  {t:"4. Look and feel", d:"Starting points for the visual direction.", q:[
-  {id:"oldlogo", type:"single", label:"What should happen to the current UB logo?", hint:"The blue \"UB\" badge with the arrow and house outline.", o:["Keep the idea, modernise it","Keep only the blue color","Start completely fresh",ADVISE]},
+  {id:"oldlogo", type:"single", label:"What should happen to the current UB logo?", hint:"The current \"UB\" badge with the arrow and house outline.", o:["Keep the idea, modernise it","Start completely fresh",ADVISE]},
   {id:"logostyle", type:"single", label:"Which logo style do you like most?", o:["Name only (wordmark)","\"UB\" monogram","Symbol + name","Badge / emblem",ADVISE]},
   {id:"ideas", type:"multi", label:"Ideas you'd like the logo to suggest", hint:"Choose all that apply.", o:["Building / house","Growth / upward arrow","Unity / joining together","Strength / solid blocks","Tools / trade","Arabic or Saudi geometry","None, keep it simple"]},
-  {id:"colors", type:"single", label:"Colors", o:["Keep blue as the main color","Blue plus a new accent color","Completely new colors",ADVISE]},
-  {id:"colormood", type:"multi", label:"Colors you like for UB", hint:"Choose up to 3.", max:3, o:["Navy","Orange","Yellow","Yellow ochre","Red","Green","Purple","Black / charcoal","Grey / concrete"]},
+  {id:"colors", type:"single", label:"Colors", o:["One strong main color","A main color plus an accent color","Two or three equal colors",ADVISE]},
+  {id:"colormood", type:"multi", label:"Colors you like for UB", hint:"Choose up to 3.", max:3, o:["Yellow","Yellow ochre","Red","Green","Purple","Black / charcoal","Grey / concrete"]},
   {id:"avoid", type:"multi", label:"Colors to avoid", hint:"Choose all that apply.", o:["Polywed teal / green","Blue","Orange","Red","Pink / purple","Black","No restrictions"]},
   {id:"style", type:"single", label:"Overall visual style", o:["Bold and industrial","Clean and minimal","Friendly and colorful","Premium and dark",ADVISE]}
  ]},
@@ -233,9 +238,6 @@ function update(){
   document.getElementById("count").textContent=`${n} of ${qs.length} answered`;
   const t=summary();
   document.getElementById("summary").textContent=t;
-  const name=(state.contact&&state.contact.name)||"Client";
-  document.getElementById("wa").href="https://wa.me/966556204075?text="+encodeURIComponent(t);
-  document.getElementById("mail").href="mailto:sarahrabee3.designer@gmail.com?subject="+encodeURIComponent("Union Build rebrand questionnaire – "+name)+"&body="+encodeURIComponent(t);
 }
 form.addEventListener("change",e=>{
   const el=e.target;
@@ -247,7 +249,7 @@ form.addEventListener("change",e=>{
 });
 form.addEventListener("input",e=>{if(e.target.matches("input[type=text],input[type=email],input[type=tel],textarea")){read();save();update();}});
 form.addEventListener("submit",e=>e.preventDefault());
-let tt;function flash(m){const el=document.getElementById("toast");el.textContent=m;el.hidden=false;clearTimeout(tt);tt=setTimeout(()=>el.hidden=true,3000);}
+let tt;function flash(m,ms){const el=document.getElementById("toast");el.textContent=m;el.hidden=false;clearTimeout(tt);tt=setTimeout(()=>el.hidden=true,ms||3500);}
 document.getElementById("copy").addEventListener("click",()=>{
   const t=summary();
   const fallback=()=>{const r=document.createRange();r.selectNodeContents(document.getElementById("summary"));const s=getSelection();s.removeAllRanges();s.addRange(r);flash("Text selected. Press Copy on your device.");};
@@ -258,6 +260,66 @@ document.getElementById("reset").addEventListener("click",e=>{
   if(!armed){armed=true;e.target.textContent="Press again to clear";setTimeout(()=>{armed=false;e.target.textContent="Clear all answers";},3000);return;}
   state={};save();render();update();armed=false;e.target.textContent="Clear all answers";flash("All answers cleared.");
 });
+// ---- PDF + send ----
+const SARAH_WA="966556204075", SARAH_MAIL="sarahrabee3.designer@gmail.com";
+function clientName(){return (state.contact&&state.contact.name)||"";}
+function fileName(){const n=clientName().replace(/[^\p{L}\p{N}]+/gu,"-").replace(/^-|-$/g,"");return "Union-Build-Questionnaire"+(n?"-"+n:"")+".pdf";}
+async function makePdf(){
+  try{await document.fonts.ready}catch(e){}
+  const W=1240,H=1754,M=96,LW=W-2*M,F='"IBM Plex Sans","Segoe UI",Tahoma,Arial,sans-serif';
+  const pages=[];let c,x,y;
+  const page=()=>{c=document.createElement("canvas");c.width=W;c.height=H;x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,W,H);x.textBaseline="top";y=M;pages.push(c);};
+  const wrap=(t,font)=>{x.font=font;const out=[];String(t).split("\n").forEach(par=>{let line="";par.split(/\s+/).forEach(w=>{const tr=line?line+" "+w:w;if(x.measureText(tr).width>LW&&line){out.push(line);line=w;}else line=tr;});out.push(line);});return out;};
+  const write=(t,font,color,lh,gap)=>{const ls=wrap(t,font);ls.forEach(l=>{if(y+lh>H-M){page();}x.font=font;x.fillStyle=color;x.fillText(l,M,y);y+=lh;});y+=gap||0;};
+  page();
+  write("UNION BUILD REBRAND QUESTIONNAIRE",'700 40px '+F,"#1c1e26",52,6);
+  write("Sarah's Design Studio · "+new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"}),'400 22px '+F,"#5d6273",32,18);
+  const ct=state.contact||{};
+  [["Name",ct.name],["Role",ct.role],["Mobile / WhatsApp",ct.phone],["Email",ct.email]].forEach(([k,v])=>write(k+": "+(v||"-"),'400 24px '+F,"#1c1e26",34,0));
+  y+=10;
+  S.slice(1).forEach(sec=>{
+    if(y+120>H-M)page();
+    y+=18;x.fillStyle="#7a4f0c";x.fillRect(M,y,LW,3);y+=16;
+    write(sec.t,'700 30px '+F,"#7a4f0c",40,8);
+    sec.q.forEach(q=>{
+      const v=state[q.id];let a="";
+      if(q.type==="text")a=v||"";
+      else if(v){const s=Array.isArray(v.sel)?v.sel.join(" · "):v.sel;a=[s,v.other?"Other: "+v.other:""].filter(Boolean).join(" · ");}
+      if(y+70>H-M)page();
+      write(q.label,'600 23px '+F,"#1c1e26",32,0);
+      write(a||"(skipped)",'400 23px '+F,a?"#2b2d33":"#9a9fae",32,12);
+    });
+  });
+  const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:"mm",format:"a4"});
+  pages.forEach((pc,i)=>{if(i)doc.addPage();doc.addImage(pc.toDataURL("image/jpeg",0.88),"JPEG",0,0,210,297);});
+  return doc.output("blob");
+}
+function saveBlob(blob,name){const u=URL.createObjectURL(blob);const a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),60000);}
+function canShareFiles(){try{return !!(navigator.canShare&&navigator.canShare({files:[new File(["x"],"x.pdf",{type:"application/pdf"})]}));}catch(e){return false;}}
+async function send(kind){
+  read();save();update();
+  if(!clientName()){flash("Please add your name at the top first.");document.getElementById("f-name").focus();return;}
+  if(!window.jspdf){flash("The PDF tool didn't load. Check your connection, or use \"Copy answers as text\".",6000);return;}
+  const share=canShareFiles();
+  const msg="Union Build rebrand questionnaire from "+clientName()+". My answers are in the attached PDF.";
+  const pre=(!share&&kind==="wa")?window.open("","_blank"):null;
+  flash("Preparing your PDF…",8000);
+  let blob;try{blob=await makePdf();}catch(e){if(pre)pre.close();flash("Couldn't create the PDF. Use \"Copy answers as text\" instead.",6000);return;}
+  const name=fileName();
+  if(share){
+    try{
+      await navigator.share({files:[new File([blob],name,{type:"application/pdf"})],title:"Union Build questionnaire",text:kind==="wa"?msg+" (For Sarah, WhatsApp +966 55 620 4075)":"To: "+SARAH_MAIL+"\n"+msg});
+      flash(kind==="wa"?"Sent to your share menu. Make sure you chose Sarah's WhatsApp chat.":"Sent to your share menu. Make sure the email goes to "+SARAH_MAIL+".",7000);return;
+    }catch(e){if(e&&e.name==="AbortError"){flash("Sending cancelled.");return;}}
+  }
+  saveBlob(blob,name);
+  if(kind==="wa"){const u="https://wa.me/"+SARAH_WA+"?text="+encodeURIComponent(msg);if(pre)pre.location.href=u;else window.open(u,"_blank");}
+  else{location.href="mailto:"+SARAH_MAIL+"?subject="+encodeURIComponent("Union Build questionnaire – "+clientName())+"&body="+encodeURIComponent(msg+"\n\n");}
+  flash("The PDF ("+name+") was downloaded. Attach it to the message to Sarah and press send.",10000);
+}
+document.getElementById("wa").addEventListener("click",()=>send("wa"));
+document.getElementById("mail").addEventListener("click",()=>send("mail"));
+document.getElementById("pdf").addEventListener("click",async()=>{read();if(!window.jspdf){flash("The PDF tool didn't load.");return;}try{saveBlob(await makePdf(),fileName());flash("PDF downloaded.");}catch(e){flash("Couldn't create the PDF.");}});
 render();read();update();
 </script>
 </body>
