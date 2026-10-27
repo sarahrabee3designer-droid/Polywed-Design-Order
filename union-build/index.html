@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Union Build Rebrand Questionnaire</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one calm column of numbered sections; a sticky progress bar; a summary + send step at the end. */
+:root{
+  --bg:#f5f6f9; --surface:#ffffff; --fg:#1c1e26; --muted:#5d6273; --line:#dcdfe8;
+  --accent:#2f3e8f; --accent-soft:#e7eaf7; --on-accent:#ffffff; --ok:#1f7a5c;
+  --display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --body:"IBM Plex Sans",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#13151c; --surface:#1b1e29; --fg:#e8eaf1; --muted:#a3a8b9; --line:#2e3243;
+  --accent:#9aa8f2; --accent-soft:#262c4b; --on-accent:#10131f; --ok:#6fd1aa; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#13151c; --surface:#1b1e29; --fg:#e8eaf1; --muted:#a3a8b9; --line:#2e3243;
+  --accent:#9aa8f2; --accent-soft:#262c4b; --on-accent:#10131f; --ok:#6fd1aa; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.55 var(--body);margin:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.15}
+h1{font-size:clamp(28px,5.5vw,40px);font-weight:800;font-stretch:112%}
+h2{font-size:20px;font-weight:750;font-stretch:108%}
+p{margin:0;max-width:66ch}
+.kicker{font:600 12px/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.muted{color:var(--muted)}
+header{padding-top:36px;display:flex;flex-direction:column;gap:12px}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:12px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}
+.track{flex:1;height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.fill{height:100%;width:0;background:var(--accent);transition:width .25s}
+.count{font:500 13px var(--mono);color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+section.sec{display:flex;flex-direction:column;gap:14px}
+.sec-head{display:flex;flex-direction:column;gap:4px;padding-top:8px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.q legend{padding:0;font-weight:600;font-size:15.5px}
+fieldset{border:0;margin:0;padding:0;min-width:0;display:flex;flex-direction:column;gap:10px}
+.hint{font-size:13px;color:var(--muted)}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border:1px solid var(--line);border-radius:6px;cursor:pointer;background:var(--bg);min-width:0}
+.opt:hover{border-color:var(--accent)}
+.opt input{margin:3px 0 0;accent-color:var(--accent);flex:none}
+.opt:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.opt span{min-width:0}
+input[type=text],input[type=email],input[type=tel],textarea{width:100%;font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:9px 12px}
+textarea{min-height:90px;resize:vertical}
+input:focus-visible,textarea:focus-visible,button:focus-visible,.opt:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:560px){.grid2{grid-template-columns:1fr}}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.send{background:var(--surface);border:2px solid var(--accent);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+button,.btn{font:600 14px var(--body);border-radius:6px;padding:11px 16px;cursor:pointer;border:1px solid var(--accent);background:var(--accent);color:var(--on-accent);text-decoration:none;display:inline-flex;align-items:center}
+button.ghost,.btn.ghost{background:transparent;color:var(--accent)}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.5 var(--mono);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:12px;max-height:320px;overflow:auto;margin:0}
+.contact{font:14px var(--mono);user-select:all}
+.toast{color:var(--ok);font-weight:600;font-size:14px}
+footer{font-size:13px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.fill{transition:none}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <span class="kicker">Sarah's Design Studio · Client brief</span>
+    <h1>Union Build rebrand questionnaire</h1>
+    <p class="muted">This helps us understand what you want for the new Union Build and plan the right package. Most questions are multiple choice and take about 10 minutes. Skip anything you're unsure of, or choose "Not sure, please advise". Your answers are kept in this browser until you send them.</p>
+  </header>
+
+  <div class="bar"><div class="track"><div class="fill" id="fill"></div></div><span class="count" id="count">0 answered</span></div>
+
+  <form id="form" novalidate></form>
+
+  <div class="send" id="send">
+    <h2>Send your answers</h2>
+    <p class="muted">Check the summary, then send it to Sarah by WhatsApp or email. If a button doesn't open your app, press "Copy answers" and paste them into a message.</p>
+    <pre id="summary"></pre>
+    <div class="btns">
+      <button type="button" id="copy">Copy answers</button>
+      <a class="btn ghost" id="wa" href="#" target="_blank" rel="noopener">Send by WhatsApp</a>
+      <a class="btn ghost" id="mail" href="#">Send by email</a>
+      <button type="button" class="ghost" id="reset">Clear all answers</button>
+    </div>
+    <span class="toast" id="toast" hidden></span>
+    <div class="muted" style="font-size:14px">WhatsApp: <span class="contact">+966 55 620 4075</span><br>Email: <span class="contact">sarahrabee3.designer@gmail.com</span></div>
+  </div>
+
+  <footer>Questions? Message Sarah on WhatsApp at +966 55 620 4075.</footer>
+</div>
+
+<script>
+const ADVISE = "Not sure, please advise";
+const S = [
+ {t:"About you", d:"So we know who to follow up with.", q:[
+  {id:"contact", type:"fields", label:"Your details", fields:[["name","Your name","text"],["role","Your role","text"],["phone","Mobile / WhatsApp","tel"],["email","Email","email"]]}
+ ]},
+ {t:"1. Separating from Polywed", d:"How independent the new Union Build should be.", q:[
+  {id:"separation", type:"single", label:"How separate should Union Build be from Polywed?", o:["Fully independent: no mention of Polywed anywhere","Independent, with a small \"by Polywed\" or \"a Polywed company\" line","Sister brand: own identity but shares some Polywed elements",ADVISE]},
+  {id:"own", type:"multi", label:"What will Union Build have of its own?", hint:"Choose all that apply.", o:["Own website / domain","Own social media accounts","Own phone or WhatsApp line","Own email addresses","Own sales team","Own distributors or shops","Own showroom or branch","None yet, everything goes through Polywed for now"]},
+  {id:"name", type:"single", label:"The English name", o:["Keep \"Union Build\"","Keep it, but lead with \"UB\"","Open to a new name (naming adds to the scope)",ADVISE], other:true},
+  {id:"arname", type:"single", label:"The Arabic name", o:["يو بي (UB)","معاً نبني (Together we build)","يونيون بيلد (transliteration)","A new Arabic name",ADVISE], other:true},
+  {id:"why", type:"multi", label:"Why are you separating Union Build now?", hint:"Choose all that apply.", o:["To target a different customer","To sell at a different price level","To enter new shops or markets","To avoid confusing it with Polywed","Planning a bigger product range under UB","The current look feels outdated"], other:true}
+ ]},
+ {t:"2. Market and positioning", d:"Who buys Union Build and why.", q:[
+  {id:"audience", type:"multi", label:"Who are Union Build's main customers?", hint:"Choose up to 3.", max:3, o:["Small and mid-size contractors","Painters and finishing crews","Building material and hardware shops","Homeowners (do-it-yourself)","Large developers and projects","Distributors and wholesalers","Export customers"], other:true},
+  {id:"channels", type:"multi", label:"Where will UB products be sold?", hint:"Choose all that apply.", o:["Hardware and building material shops","Polywed stores and showrooms","Distributors","Direct to contractors / projects","Online","Export"]},
+  {id:"price", type:"single", label:"Compared with Polywed, UB's prices are…", o:["Lower: an economy / value line","About the same","Higher: a premium line","It varies by product"]},
+  {id:"reason", type:"multi", label:"The main reasons customers should choose UB", hint:"Choose up to 2.", max:2, o:["Best price for the quality","Easy to use","Reliable, consistent quality","Fast results / saves time","Made in Saudi Arabia","Available everywhere","Built for hot weather"], other:true},
+  {id:"markets", type:"single", label:"Where will UB be sold in the next 2 years?", o:["Saudi Arabia only","Saudi Arabia + GCC","Middle East and Africa","Wider international"]},
+  {id:"competitors", type:"multi", label:"Which brands do you compete with most?", hint:"Choose all that apply.", o:["Sika","Fosroc","Weber (Saint-Gobain)","Mapei","Henkel / Ceresit","Local Saudi brands","Imported low-cost brands"], other:true}
+ ]},
+ {t:"3. Brand personality", d:"How UB should feel to customers.", q:[
+  {id:"words", type:"multi", label:"Pick 3 words that should describe Union Build", max:3, o:["Strong","Friendly","Modern","Trustworthy","Bold","Simple","Practical","Energetic","Premium","Technical / expert","Proudly Saudi","Young"]},
+  {id:"tone", type:"single", label:"How should UB talk to customers?", o:["Friendly and everyday, like a helpful shop owner","Bold and energetic","Expert and technical","Formal and corporate",ADVISE]},
+  {id:"lang", type:"single", label:"Language priority on packaging and posts", o:["Arabic first","English first","Equal Arabic and English"]}
+ ]},
+ {t:"4. Look and feel", d:"Starting points for the visual direction.", q:[
+  {id:"oldlogo", type:"single", label:"What should happen to the current UB logo?", hint:"The blue \"UB\" badge with the arrow and house outline.", o:["Keep the idea, modernise it","Keep only the blue color","Start completely fresh",ADVISE]},
+  {id:"logostyle", type:"single", label:"Which logo style do you like most?", o:["Name only (wordmark)","\"UB\" monogram","Symbol + name","Badge / emblem",ADVISE]},
+  {id:"ideas", type:"multi", label:"Ideas you'd like the logo to suggest", hint:"Choose all that apply.", o:["Building / house","Growth / upward arrow","Unity / joining together","Strength / solid blocks","Tools / trade","Arabic or Saudi geometry","None, keep it simple"]},
+  {id:"colors", type:"single", label:"Colors", o:["Keep blue as the main color","Blue plus a new accent color","Completely new colors",ADVISE]},
+  {id:"colormood", type:"multi", label:"Colors you like for UB", hint:"Choose up to 3.", max:3, o:["Navy","Orange","Yellow","Yellow ochre","Red","Green","Purple","Black / charcoal","Grey / concrete"]},
+  {id:"avoid", type:"multi", label:"Colors to avoid", hint:"Choose all that apply.", o:["Polywed teal / green","Blue","Orange","Red","Pink / purple","Black","No restrictions"]},
+  {id:"style", type:"single", label:"Overall visual style", o:["Bold and industrial","Clean and minimal","Friendly and colorful","Premium and dark",ADVISE]}
+ ]},
+ {t:"5. What you need designed", d:"This sets the size of the package and the price.", q:[
+  {id:"core", type:"single", label:"Brand identity level", o:["Logo only","Logo + basic identity (colors, fonts, one-page usage sheet)","Full identity with a brand guidelines book","Full identity + brand strategy (positioning, tagline, tone of voice)",ADVISE]},
+  {id:"logoext", type:"multi", label:"Logo extras", hint:"Choose all that apply.", o:["Arabic and English lockups","Black/white and reversed versions","Icon for social media / app","Animated logo (short motion)"]},
+  {id:"words2", type:"multi", label:"Writing and naming", hint:"Choose all that apply.", o:["Tagline in English","Tagline in Arabic","Product naming / coding system","None needed"]},
+  {id:"stationery", type:"multi", label:"Stationery", hint:"Choose all that apply.", o:["Business cards","Letterhead / A4 template","Envelopes","Email signature","Quotation and invoice templates","Staff ID cards","Company profile"]},
+  {id:"skus", type:"single", label:"How many products will launch with the new packaging?", o:["1–2","3–5","6–10","11–20","More than 20","No packaging in this project"]},
+  {id:"formats", type:"multi", label:"Packaging formats", hint:"Choose all that apply.", o:["Paper / cement bags","Plastic buckets / pails","Jerry cans","Jugs / bottles","Carton boxes","Labels or stickers only"]},
+  {id:"packsys", type:"single", label:"Packaging approach", o:["One master design per format, adapted for each product (more economical)","A unique design for each product",ADVISE]},
+  {id:"print", type:"multi", label:"Product and sales material", hint:"Choose all that apply.", o:["Technical data sheet template","Product catalogue","Brochure / flyer","Price list"]},
+  {id:"digital", type:"multi", label:"Digital", hint:"Choose all that apply.", o:["Social media kit (profile, covers, post templates)","Launch campaign posts","Reels / short motion videos","Website design","Website design + build"]},
+  {id:"physical", type:"multi", label:"Signs and physical items", hint:"Choose all that apply.", o:["Shop / building signage","Vehicle branding","Uniforms","Exhibition stand","In-store stands and shelf displays","Gift items / merchandise"]},
+  {id:"visuals", type:"single", label:"Product images", o:["We need 3D product renders","We need product photography","We will provide our own images","Not needed"]}
+ ]},
+ {t:"6. Timeline, budget and process", d:"So the package fits your plans.", q:[
+  {id:"when", type:"single", label:"When do you need the new brand ready?", o:["Within 1 month","1–2 months","2–3 months","Flexible"]},
+  {id:"event", type:"single", label:"Is the deadline linked to something?", o:["A product launch","An exhibition or event","New stock / packaging print run","No fixed event"], other:true},
+  {id:"budget", type:"single", label:"Budget range for this project (SAR, excluding VAT)", o:["Under 10,000","10,000 – 20,000","20,000 – 35,000","35,000 – 50,000","Over 50,000","Please send a quote first"]},
+  {id:"phases", type:"single", label:"Would you like to do it in phases?", o:["Yes: identity first, packaging and the rest later","No: everything in one project",ADVISE]},
+  {id:"approver", type:"single", label:"Who approves the designs?", o:["One person","Two or three people","A committee / management board"]},
+  {id:"provide", type:"multi", label:"What can you send us?", hint:"Choose all that apply.", o:["Original logo files","Full product list","Current packaging photos","Competitor examples","Brands or designs you like","Nothing yet"]},
+  {id:"notes", type:"text", label:"Anything else we should know?", hint:"Brands you admire, things you dislike, plans for UB."}
+ ]}
+];
+const KEY="ub-questionnaire-v1";
+let state={};
+try{state=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){state={}}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const form=document.getElementById("form");
+
+function render(){
+  let h="";
+  S.forEach((sec,si)=>{
+    h+=`<section class="sec"><div class="sec-head"><h2>${esc(sec.t)}</h2><p class="muted">${esc(sec.d)}</p></div>`;
+    sec.q.forEach(q=>{
+      h+=`<div class="q"><fieldset><legend>${esc(q.label)}</legend>`;
+      if(q.hint)h+=`<span class="hint">${esc(q.hint)}</span>`;
+      if(q.type==="fields"){
+        h+=`<div class="grid2">`+q.fields.map(([k,l,t])=>`<label class="f">${esc(l)}<input type="${t}" id="f-${k}" data-q="${q.id}" data-k="${k}"></label>`).join("")+`</div>`;
+      }else if(q.type==="text"){
+        h+=`<textarea id="t-${q.id}" data-q="${q.id}"></textarea>`;
+      }else{
+        const typ=q.type==="single"?"radio":"checkbox";
+        h+=`<div class="opts">`+q.o.map((o,i)=>`<label class="opt"><input type="${typ}" name="${q.id}" id="${q.id}-${i}" value="${esc(o)}"><span>${esc(o)}</span></label>`).join("")+`</div>`;
+        if(q.other)h+=`<input type="text" id="o-${q.id}" data-other="${q.id}" placeholder="Other (optional)">`;
+      }
+      h+=`</fieldset></div>`;
+    });
+    h+=`</section>`;
+  });
+  form.innerHTML=h;
+  // restore
+  S.forEach(sec=>sec.q.forEach(q=>{
+    const v=state[q.id];
+    if(q.type==="fields"){q.fields.forEach(([k])=>{const el=document.getElementById("f-"+k);if(v&&v[k])el.value=v[k];});}
+    else if(q.type==="text"){if(v)document.getElementById("t-"+q.id).value=v;}
+    else{
+      const sel=v?(Array.isArray(v.sel)?v.sel:[v.sel]):[];
+      form.querySelectorAll(`input[name="${q.id}"]`).forEach(el=>el.checked=sel.includes(el.value));
+      if(q.other&&v&&v.other)document.getElementById("o-"+q.id).value=v.other;
+    }
+  }));
+}
+const allQ=()=>S.flatMap(s=>s.q.map(q=>({...q,sec:s.t})));
+function read(){
+  allQ().forEach(q=>{
+    if(q.type==="fields"){const o={};q.fields.forEach(([k])=>o[k]=document.getElementById("f-"+k).value.trim());state[q.id]=o;}
+    else if(q.type==="text"){state[q.id]=document.getElementById("t-"+q.id).value.trim();}
+    else{
+      const sel=[...form.querySelectorAll(`input[name="${q.id}"]:checked`)].map(e=>e.value);
+      const other=q.other?document.getElementById("o-"+q.id).value.trim():"";
+      state[q.id]={sel:q.type==="single"?(sel[0]||""):sel,other};
+    }
+  });
+}
+function answered(q){
+  const v=state[q.id];if(!v)return false;
+  if(q.type==="fields")return Object.values(v).some(Boolean);
+  if(q.type==="text")return !!v;
+  return (Array.isArray(v.sel)?v.sel.length:!!v.sel)||!!v.other;
+}
+function summary(){
+  const c=state.contact||{};
+  let t="UNION BUILD REBRAND QUESTIONNAIRE\n";
+  t+=`From: ${c.name||"-"}${c.role?" ("+c.role+")":""}\nPhone: ${c.phone||"-"}  Email: ${c.email||"-"}\n`;
+  S.slice(1).forEach(sec=>{
+    t+=`\n== ${sec.t.toUpperCase()} ==\n`;
+    sec.q.forEach(q=>{
+      const v=state[q.id];let a="";
+      if(q.type==="text")a=v||"";
+      else if(v){const s=Array.isArray(v.sel)?v.sel.join("; "):v.sel;a=[s,v.other?"Other: "+v.other:""].filter(Boolean).join("; ");}
+      t+=`- ${q.label}: ${a||"(skipped)"}\n`;
+    });
+  });
+  return t;
+}
+function update(){
+  const qs=allQ();const n=qs.filter(answered).length;
+  document.getElementById("fill").style.width=(n/qs.length*100)+"%";
+  document.getElementById("count").textContent=`${n} of ${qs.length} answered`;
+  const t=summary();
+  document.getElementById("summary").textContent=t;
+  const name=(state.contact&&state.contact.name)||"Client";
+  document.getElementById("wa").href="https://wa.me/966556204075?text="+encodeURIComponent(t);
+  document.getElementById("mail").href="mailto:sarahrabee3.designer@gmail.com?subject="+encodeURIComponent("Union Build rebrand questionnaire – "+name)+"&body="+encodeURIComponent(t);
+}
+form.addEventListener("change",e=>{
+  const el=e.target;
+  if(el.type==="checkbox"){
+    const q=allQ().find(x=>x.id===el.name);
+    if(q&&q.max){const on=form.querySelectorAll(`input[name="${q.id}"]:checked`);if(on.length>q.max){el.checked=false;flash(`Choose up to ${q.max} for this question.`);}}
+  }
+  read();save();update();
+});
+form.addEventListener("input",e=>{if(e.target.matches("input[type=text],input[type=email],input[type=tel],textarea")){read();save();update();}});
+form.addEventListener("submit",e=>e.preventDefault());
+let tt;function flash(m){const el=document.getElementById("toast");el.textContent=m;el.hidden=false;clearTimeout(tt);tt=setTimeout(()=>el.hidden=true,3000);}
+document.getElementById("copy").addEventListener("click",()=>{
+  const t=summary();
+  const fallback=()=>{const r=document.createRange();r.selectNodeContents(document.getElementById("summary"));const s=getSelection();s.removeAllRanges();s.addRange(r);flash("Text selected. Press Copy on your device.");};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>flash("Copied. Paste it into WhatsApp or email."),fallback);}else fallback();
+});
+let armed=false;
+document.getElementById("reset").addEventListener("click",e=>{
+  if(!armed){armed=true;e.target.textContent="Press again to clear";setTimeout(()=>{armed=false;e.target.textContent="Clear all answers";},3000);return;}
+  state={};save();render();update();armed=false;e.target.textContent="Clear all answers";flash("All answers cleared.");
+});
+render();read();update();
+</script>
+</body>
+</html>
