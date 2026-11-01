@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Polywed New Price Menu</title>
+<meta name="description" content="Polywed design services price menu by Sarah's Design Studio">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@500;600&display=swap">
+<style>
+/* Layout: a printed rate card in Polywed's own language. White sheet, teal bands, isometric cube texture,
+   and service codes styled like the product codes on Polywed packaging (T1, G2 ...). Single light look by choice. */
+:root {
+  color-scheme: light;
+  --teal: #007D70;        /* Polywed primary */
+  --teal-light: #0AAE9A;  /* logo accent */
+  --teal-deep: #29665C;
+  --ink: #2B2F2E;
+  --muted: #646B69;
+  --line: #DDE3E1;
+  --paper: #FFFFFF;
+  --mist: #F4F7F6;
+  --c-sm: #0AAE9A;  /* social */
+  --c-st: #3D4F9C;  /* stationery (Polywed bonding blue) */
+  --c-pr: #E8794A;  /* promotional (tile-adhesive coral, deepened for contrast) */
+  --c-pk: #E9A800;  /* packaging (grout yellow, deepened) */
+  --display: "Jost", "Futura", "Century Gothic", system-ui, sans-serif;
+  --body: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --arabic: "IBM Plex Sans Arabic", "Geeza Pro", Tahoma, sans-serif;
+}
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; color: var(--ink); }
+p { margin: 0; }
+.ar { font-family: var(--arabic); direction: rtl; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* top bar */
+.top { border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 18px; flex-wrap: wrap; }
+.top img { height: 40px; width: auto; display: block; }
+.top .meta { font-size: 12.5px; color: var(--muted); text-align: right; line-height: 1.5; }
+.top .meta b { color: var(--ink); font-weight: 600; }
+
+/* hero */
+.hero { background-color: var(--mist); position: relative; overflow: hidden; }
+.hero::after { content: ""; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='64' viewBox='0 0 56 64'%3E%3Cg fill='none' stroke='%23007D70' stroke-opacity='.09' stroke-width='1'%3E%3Cpath d='M28 0 L56 16 L56 48 L28 64 L0 48 L0 16 Z'/%3E%3Cpath d='M28 32 L28 64 M28 32 L0 16 M28 32 L56 16'/%3E%3C/g%3E%3C/svg%3E"); background-size: 56px 64px; -webkit-mask-image: linear-gradient(90deg, transparent 20%, #000 75%); mask-image: linear-gradient(90deg, transparent 20%, #000 75%); pointer-events: none; }
+.hero .wrap { position: relative; z-index: 1; padding-block: 56px 48px; display: grid; gap: 18px; }
+.kicker { font-family: var(--display); font-size: 12.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--teal); font-weight: 600; }
+.bar-title { border-left: 5px solid var(--teal-light); padding-left: 16px; }
+.hero h1 { font-size: clamp(32px, 5.4vw, 54px); line-height: 1.05; font-weight: 700; max-width: 18ch; }
+.hero .lede { font-size: 17px; color: var(--muted); max-width: 60ch; }
+.facts { display: flex; flex-wrap: wrap; gap: 10px 28px; margin-top: 6px; font-size: 13.5px; color: var(--muted); }
+.facts b { color: var(--teal); font-family: var(--display); font-size: 15px; font-weight: 600; }
+
+section { padding-block: 56px; }
+.sec-head { display: grid; gap: 8px; margin-bottom: 28px; }
+.sec-head h2 { font-size: clamp(24px, 3.4vw, 32px); font-weight: 700; line-height: 1.15; }
+.sec-head p { color: var(--muted); max-width: 64ch; }
+
+/* tiers */
+.tiers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: start; }
+.tier { border: 1px solid var(--line); background: var(--paper); display: flex; flex-direction: column; min-width: 0; }
+.tier-head { padding: 22px 22px 18px; border-bottom: 1px solid var(--line); display: grid; gap: 4px; }
+.tier-name { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.tier-name h3 { font-size: 22px; font-weight: 600; }
+.tier-name .ar { font-size: 15px; color: var(--muted); }
+.price { font-family: var(--display); font-size: 40px; font-weight: 700; color: var(--teal); line-height: 1.1; margin-top: 6px; }
+.price small { font-size: 14px; font-weight: 500; color: var(--muted); margin-left: 4px; }
+.credits-line { font-size: 14px; color: var(--ink); }
+.credits-line b { font-weight: 600; }
+.tier-body { padding: 18px 22px 22px; display: grid; gap: 16px; }
+.mini-label { font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.example { display: grid; gap: 6px; font-size: 14px; }
+.example div { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px dashed var(--line); padding-bottom: 5px; }
+.example span:last-child { color: var(--muted); white-space: nowrap; }
+.perks { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; font-size: 14px; }
+.perks li { padding-left: 20px; position: relative; }
+.perks li::before { content: ""; position: absolute; left: 2px; top: .5em; width: 9px; height: 9px; background: var(--teal-light); transform: rotate(45deg); }
+.tier.featured { border: 2px solid var(--teal); }
+.tier.featured .tier-head { background: var(--teal); color: #fff; border-bottom-color: var(--teal); }
+.tier.featured .tier-head h3, .tier.featured .price { color: #fff; }
+.tier.featured .tier-head .ar, .tier.featured .price small { color: #CFEDE8; }
+.tier.featured .credits-line { color: #fff; }
+.flag { justify-self: start; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; background: #fff; color: var(--teal); padding: 3px 8px; margin-bottom: 6px; }
+
+/* credits band */
+.band { background: var(--teal); color: #fff; }
+.band .wrap { padding-block: 40px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; }
+.band h3 { color: #fff; font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+.band p { color: #D6F0EC; font-size: 14px; }
+.band .big { font-family: var(--display); font-size: 30px; font-weight: 700; color: #fff; line-height: 1; margin-bottom: 8px; }
+
+/* menu */
+.cat { margin-bottom: 36px; break-inside: avoid; }
+.cat-head { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; }
+.code-tab { font-family: var(--display); font-weight: 700; font-size: 20px; color: #fff; background: var(--c); min-width: 56px; height: 44px; display: grid; place-items: center; padding: 0 10px; letter-spacing: .02em; }
+.cat-head h3 { font-size: 21px; font-weight: 600; }
+.cat-head p { font-size: 13.5px; color: var(--muted); }
+.rows { border-top: 3px solid var(--c); }
+.row { display: grid; grid-template-columns: 58px minmax(0, 1fr) 70px 110px 130px; gap: 12px; align-items: center; padding: 11px 0; border-bottom: 1px solid var(--line); }
+.row.headrow { font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding: 8px 0; }
+.row .code { font-family: var(--display); font-weight: 600; color: var(--c); font-size: 15px; }
+.row .name { font-weight: 500; }
+.row .name small { display: block; color: var(--muted); font-weight: 400; font-size: 13px; }
+.row .cr { font-family: var(--display); font-weight: 600; font-size: 16px; text-align: right; }
+.row .sar { text-align: right; color: var(--muted); font-size: 14px; }
+.row .qty { justify-self: end; }
+.row.on { background: linear-gradient(90deg, rgba(10,174,154,.07), transparent 70%); }
+
+/* projects */
+.projects { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.proj { border: 1px solid var(--line); padding: 20px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.proj h3 { font-size: 17px; font-weight: 600; }
+.proj .from { font-family: var(--display); font-weight: 700; font-size: 24px; color: var(--teal); }
+.proj p { font-size: 14px; color: var(--muted); }
+.projects.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.package { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 18px; align-items: start; }
+.package .example + .mini-label { margin-top: 10px; }
+.package .tier-body { gap: 12px; }
+.note { margin-top: 18px; font-size: 14px; color: var(--muted); max-width: 72ch; }
+
+/* terms */
+.terms { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 40px; }
+.term { padding: 14px 0; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 16px; break-inside: avoid; }
+.term b { font-family: var(--display); font-weight: 600; color: var(--teal-deep); }
+.term span { font-size: 14px; }
+.turn { width: 100%; border-collapse: collapse; font-size: 14px; }
+.turn td { padding: 3px 0; }
+.turn td:last-child { text-align: right; color: var(--muted); white-space: nowrap; padding-left: 10px; }
+
+footer { background: var(--mist); border-top: 4px solid var(--teal-light); }
+footer .wrap { padding-block: 32px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 18px; font-size: 13.5px; color: var(--muted); }
+footer b { color: var(--ink); font-family: var(--display); font-size: 16px; font-weight: 600; }
+
+
+@media (max-width: 860px) {
+  .tiers, .projects, .projects.two, .package { grid-template-columns: minmax(0, 1fr); }
+  .band .wrap { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .terms { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 560px) {
+  .row { grid-template-columns: 34px minmax(0, 1fr) 30px 62px 62px; gap: 6px; font-size: 13.5px; }
+  .row.headrow { font-size: 10px; letter-spacing: .04em; }
+  .row .qty { grid-column: 2 / 4; justify-self: start; }
+  .row.headrow .qty { display: none; }
+  .band .wrap { grid-template-columns: minmax(0, 1fr); }
+  .term { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .top .meta { text-align: left; }
+}
+@media (prefers-reduced-motion: reduce) { .meter i { transition: none; } }
+
+@page { size: A4; margin: 12mm 0; }
+@media print {
+  body { font-size: 12.5px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .planner, .qty, .row.headrow .qty { display: none !important; }
+  .row.on { background: none; }
+  section { padding-block: 18px; }
+  .sec-head { margin-bottom: 16px; }
+  .cat { margin-bottom: 22px; }
+  .term { padding: 9px 0; }
+  .hero .wrap { padding-block: 30px; }
+  footer .wrap { padding-block: 14px; }
+  footer { break-inside: avoid; }
+  .tier, .proj, .cat-head, .row, .band, .tiers, .projects { break-inside: avoid; }
+  #menu { break-before: page; }
+  .page-break { break-before: page; }
+  .tiers { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+</style>
+
+
+<style>
+.row.pl { grid-template-columns: 30px 50px minmax(0,1fr) 84px 96px 84px 58px; cursor: pointer; }
+.row.pl.headrow { cursor: default; }
+.row.pl .tick input { width: 20px; height: 20px; accent-color: var(--teal); cursor: pointer; margin: 0; }
+.row.pl .q { justify-self: end; }
+.row.pl .q input { width: 52px; padding: 5px 6px; border: 1px solid var(--line); font: inherit; text-align: center; background: #fff; color: var(--ink); }
+.row.pl:not(.on) .q input { opacity: .35; }
+.row.pl.on { background: linear-gradient(90deg, rgba(10,174,154,.10), transparent 75%); }
+.bill { border: 2px solid var(--teal); background: #fff; max-width: 620px; }
+.bill-head { background: var(--teal); color: #fff; padding: 14px 20px; font-family: var(--display); font-weight: 600; font-size: 17px; }
+.bill-body { padding: 16px 20px; display: grid; gap: 10px; }
+.bill-line { display: flex; justify-content: space-between; gap: 12px; font-size: 14.5px; }
+.bill-line.total { border-top: 1px solid var(--line); padding-top: 10px; font-family: var(--display); font-weight: 700; font-size: 20px; color: var(--teal); }
+.bill-list { display: grid; gap: 4px; font-size: 14px; color: var(--muted); }
+.bill-list .empty { font-style: italic; }
+.bill-note { font-size: 13px; color: var(--muted); }
+.sticky { position: sticky; bottom: 0; z-index: 5; background: var(--teal); color: #fff; }
+.sticky .wrap { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 12px; flex-wrap: wrap; font-size: 14px; }
+.sticky b { font-family: var(--display); font-size: 18px; }
+.sticky a { color: #fff; font-weight: 600; }
+@media print { .sticky { display: none; } }
+.row .price-main { font-family: var(--display); font-weight: 600; font-size: 16px; text-align: right; color: var(--ink, #333); }
+.sample { border:1px solid var(--line); background: var(--paper); padding: 18px 22px; max-width: 620px; }
+.sample .example + .mini-label { margin-top: 10px; }
+@media print { #menu { break-before: auto; } #example, #projects, .sample, .terms .term, .projects { break-inside: avoid; } }
+@media (max-width: 560px) { .row.pl { grid-template-columns: 24px 34px minmax(0,1fr) 62px 48px; gap: 6px; } .row.pl > :nth-child(5), .row.pl > :nth-child(6) { display: none; } .row.pl .q input { width: 44px; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <img src="data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNjguNDQ4OSA3MCI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOiMwYWFlOWE7fS5jbHMtMntmaWxsOiMwMDdkNzA7fS5jbHMtM3tmaWxsOiM2OTY4Njg7fTwvc3R5bGU+PC9kZWZzPjxwb2x5Z29uIGNsYXNzPSJjbHMtMSIgcG9pbnRzPSIyOS4xMjEgMjMuMzM1IDE0LjU2MSAxNS4yMTEgMTQuNTYxIDAgMjkuMTIxIDguMTI1IDI5LjEyMSAyMy4zMzUiLz48cG9seWdvbiBjbGFzcz0iY2xzLTIiIHBvaW50cz0iMjkuMTIxIDIzLjMzNSA0My42ODEgMTUuMjExIDQzLjY4MSAwIDI5LjEyMSA4LjEyNSAyOS4xMjEgMjMuMzM1Ii8+PHBvbHlnb24gY2xhc3M9ImNscy0xIiBwb2ludHM9IjI5LjEyMSA3MCAxNC41NjEgNjEuODc2IDE0LjU2MSA0Ni42NjcgMjkuMTIxIDU0Ljc4OSAyOS4xMjEgNzAiLz48cG9seWdvbiBjbGFzcz0iY2xzLTIiIHBvaW50cz0iMjkuMTIxIDcwIDQzLjY4MSA2MS44NzYgNDMuNjgxIDQ2LjY2NyAyOS4xMjEgNTQuNzg5IDI5LjEyMSA3MCIvPjxwb2x5Z29uIGNsYXNzPSJjbHMtMSIgcG9pbnRzPSIxNC41NjEgNDYuNjY3IDAgMzguNTQ1IDAgMjMuMzM1IDE0LjU2MSAzMS40NTcgMTQuNTYxIDQ2LjY2NyIvPjxwb2x5Z29uIGNsYXNzPSJjbHMtMiIgcG9pbnRzPSIxNC41NjEgNDYuNjY3IDI5LjEyMSAzOC41NDUgMjkuMTIxIDIzLjMzNSAxNC41NjEgMzEuNDU3IDE0LjU2MSA0Ni42NjciLz48cG9seWdvbiBjbGFzcz0iY2xzLTEiIHBvaW50cz0iNDMuNjgxIDQ2LjY2NyAyOS4xMiAzOC41NDUgMjkuMTIgMjMuMzM1IDQzLjY4MSAzMS40NTcgNDMuNjgxIDQ2LjY2NyIvPjxwb2x5Z29uIGNsYXNzPSJjbHMtMiIgcG9pbnRzPSI0My42ODEgNDYuNjY3IDU4LjI0MSAzOC41NDUgNTguMjQxIDIzLjMzNSA0My42ODEgMzEuNDU3IDQzLjY4MSA0Ni42NjciLz48cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik0xMTcuNDg0OCw5LjM5NDRjLTEwLjk1NzIsMC0xNC44NjE1LDYuOTI1NC0xNC44NjE1LDEzLjQwNjIsMCw2LjQ2ODQsMy45MDQzLDEzLjM3OTQsMTQuODYxNSwxMy4zNzk0LDEwLjk1ODgsMCwxNC44NjM1LTYuOTExLDE0Ljg2MzUtMTMuMzc5NEMxMzIuMzQ4MywxNi4zMiwxMjguNDQzNiw5LjM5NDQsMTE3LjQ4NDgsOS4zOTQ0Wm03LjAwNDYsMTMuNDA2MmMwLDQuMzc3MS0yLjYxODgsNi45OS03LjAwNDYsNi45OS02LjQ5NjgsMC03LjAwMTYtNS4zNTA3LTcuMDAxNi02Ljk5LDAtMS42NDE2LjUwNDgtNi45OTk1LDcuMDAxNi02Ljk5OTVDMTIxLjg3MDYsMTUuODAxMSwxMjQuNDg5NCwxOC40MTczLDEyNC40ODk0LDIyLjgwMDZaIi8+PHBhdGggY2xhc3M9ImNscy0yIiBkPSJNODUuODIyNCw5LjM5NDRINzQuMDI3OXYzNS42ODhsLjg3MDctLjA4ODVhMTEuMjE3NSwxMS4yMTc1LDAsMCwwLDMuMTA0LS42OTY3QTUuODk5LDUuODk5LDAsMCwwLDgxLjc4LDM4LjQwM1YzNS41Mzg3aDQuMDQyN2M5LjA1NjMsMCwxNS4xNDEzLTUuMjQ4NywxNS4xNDEzLTEzLjA2MTRDMTAwLjk2MzcsMTQuNTMsOTUuMDIsOS4zOTQ0LDg1LjgyMjQsOS4zOTQ0Wk04MS43OCwxNi43Njc0YzAtLjUzMzEuMDI3My0uNjU4Ny43NDUyLS42NTg3aDMuMDY2OWM1LjA5NSwwLDcuNDY3OCwyLjAyMzQsNy40Njc4LDYuMzY4NiwwLDQuMzM1LTIuMzcyOCw2LjM1NDMtNy40Njc4LDYuMzU0M0g4MS43OFoiLz48cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik0yNjcuNTc4Mi4wODg1YTExLjE5OTEsMTEuMTk5MSwwLDAsMC0zLjEwOTMuNjk3Nyw2LjI3MjcsNi4yNzI3LDAsMCwwLTIuMDQwOCwxLjMxNTMsNi4yMzM5LDYuMjMzOSwwLDAsMC0xLjc0MzQsNC41OVY5LjU0MzZIMjU2LjY0MmMtOS4wNTY4LDAtMTUuMTQxNCw1LjI0ODktMTUuMTQxNCwxMy4wNjE0LDAsNy45NDc0LDUuOTQzNiwxMy4wODMsMTUuMTQxNCwxMy4wODNoNy45MjY4YzIuNTY2NywwLDMuODY3Ny0xLjAyNzEsMy44Njc3LTMuMDUxNUwyNjguNDQ4OSwwWm0tNi44OTM1LDE2LjE2MjNWMjguMzE0OWMwLC41MzMxLS4wMjc4LjY1ODctLjc0NTEuNjU4N2gtMy4wNjcxYy01LjA5NDQsMC03LjQ2NzctMi4wMjM0LTcuNDY3Ny02LjM2ODYsMC00LjMzNSwyLjM3MzMtNi4zNTQyLDcuNDY3Ny02LjM1NDJaIi8+PHBhdGggY2xhc3M9ImNscy0yIiBkPSJNMTY3LjA3NzEsMTAuMDk2M2E2LjI3NjksNi4yNzY5LDAsMCwwLTIuMDQwOCwxLjMxNjMsNi4yMzI2LDYuMjMyNiwwLDAsMC0xLjc0MjUsNC41ODkyVjI4LjgzNjdoLTUuMDIyNGMtNC40NTUzLDAtNS4zNjYyLTIuMTA4Ny01LjM5MDktNS41MDYxVjkuMzA4OWwtLjg3MTcuMDlhMTEuMDcxLDExLjA3MSwwLDAsMC0zLjEwOTEuNjk3OCw2LjI3NzQsNi4yNzc0LDAsMCwwLTIuMDQwOSwxLjMxNjMsNi4yMzMsNi4yMzMsMCwwLDAtMS43NDI1LDQuNTg5MmwuMDAxMSw3LjMzMDljLjAyMTYsNy43NjUyLDQuNjYsMTIuMjE4NCwxMi43MjM4LDEyLjIxODRoNS41MTQ0Yy0uMjkzMywxLjAwMzUtMS4zMjY2LDIuMjk3Mi01LjIzLDIuMjk3MkgxNDcuNjUzM2wuMDg5NS44NzE3YTkuMzc1OSw5LjM3NTksMCwwLDAsLjU4ODcsMi42MTgyLDUuMDQxOSw1LjA0MTksMCwwLDAsNS4wMjY2LDMuMjIzNWg1LjczNzZjNy44MjYsMCwxMS45NjIzLTQuMDgsMTEuOTYyMy0xMS43OTc2VjkuMzA4OWwtLjg3MTcuMDlBMTEuMDcxOCwxMS4wNzE4LDAsMCwwLDE2Ny4wNzcxLDEwLjA5NjNaIi8+PHBhdGggY2xhc3M9ImNscy0yIiBkPSJNMTM3Ljc5MDYuOTgwN0E2LjI1NDksNi4yNTQ5LDAsMCwwLDEzNS43NSwyLjI5NmE2LjIzNDEsNi4yMzQxLDAsMCwwLTEuNzQyNCw0LjU5VjM1LjQ5MzVIMTQxLjc3bC4wMDExLTM1LjI5OS0uODcwNy4wODg1QTExLjE4OTEsMTEuMTg5MSwwLDAsMCwxMzcuNzkwNi45ODA3WiIvPjxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTIwOC42MDc4LDEwLjA5NjNhNi4yOCw2LjI4LDAsMCwwLTIuMDQwOSwxLjMxNjMsNi4yMzMzLDYuMjMzMywwLDAsMC0xLjc0MjMsNC41ODkybC0uMDMsMTIuNTcyNWMwLC41NTI2LDAsLjcwMDktLjc3LjcwMDlIMTk3LjMzbC4wMS0xOS45NjYzLS44NzE3LjA5YTExLjA3MzUsMTEuMDczNSwwLDAsMC0zLjEwOTIuNjk3OCw2LjI4LDYuMjgsMCwwLDAtMi4wNDA5LDEuMzE2Myw2LjIzMzMsNi4yMzMzLDAsMCwwLTEuNzQyMyw0LjU4OTJsLjAwMywxMy4yNzM0aC0yLjE1NzFjLTMuNDUwOSwwLTQuODU4OC0xLjQ1OTQtNC44NTg4LTUuMDM2OWwuMDE1NC0xNC45Mjk0LS44NzE4LjA5YTExLjA4MTEsMTEuMDgxMSwwLDAsMC0zLjEwOTEuNjk3OCw2LjI3NjksNi4yNzY5LDAsMCwwLTIuMDQwOCwxLjMxNjMsNi4yMzI2LDYuMjMyNiwwLDAsMC0xLjc0MjUsNC41ODkydjkuMjAxOWMwLDYuOTUsNC4xNjQxLDEwLjc3NzcsMTEuNzI2NSwxMC43Nzc3SDIwOC43MmMzLjE3MSwwLDMuODM2OS0xLjYyNDEsMy44MzY5LTIuOTg2N2wuMDMxOS0yMy42ODU4LS44NzE4LjA5QTExLjA3MzUsMTEuMDczNSwwLDAsMCwyMDguNjA3OCwxMC4wOTYzWiIvPjxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTIzOC43MDg0LDMyLjEzNzRhNC44MDMxLDQuODAzMSwwLDAsMC00Ljc4NTYtMy4wN2gtNC4yNzIyYTguNjM1NSw4LjYzNTUsMCwwLDEtNi40NTEtMi40NDY0aDEzLjU0NjJhMi4zNTksMi4zNTksMCwwLDAsMi41MjU2LTIuNjUzM3YtNC40NDRjMC02Ljk1NjMtNC41NDM4LTExLjQ1MTctMTEuNTc1Mi0xMS40NTE3LTkuMzgyMSwwLTEyLjg3ODIsNy45MjM3LTEyLjg3ODIsMTIuOTE4M2EyMi43MjI3LDIyLjcyMjcsMCwwLDAsLjQyOTEsNC45NzFjLjEyMTUuOTEzOSwxLjYyLDkuNTMyMywxNC40NDQ2LDkuNTMyM2g5LjY2NTJsLS4wOS0uODcwN0E4Ljg0MjgsOC44NDI4LDAsMCwwLDIzOC43MDg0LDMyLjEzNzRaTTIyMi41OTg2LDIwLjJjLjI0LTIuMTM2NiwxLjI1NDYtNS41NTM1LDUuMjgzOC01LjU1MzUsMi40MSwwLDMuOTY4NSwxLjQ1NjMsMy45Njg1LDMuNzExMlYyMC4yWiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTc0LjY3LDY1LjM0NmE0LjcyOCw0LjcyOCwwLDAsMSwuMjkxMy0xLjYyNSw0LjUwOTEsNC41MDkxLDAsMCwxLC44NDA4LTEuNDM1Nyw0LjI1MjYsNC4yNTI2LDAsMCwxLDEuMzQ3Mi0xLjAyNCw0LjA3LDQuMDcsMCwwLDEsMS44MjA2LS4zOTIyLDMuODcxOSwzLjg3MTksMCwwLDEsMi4wODEuNTQ0NEEzLjM0MzUsMy4zNDM1LDAsMCwxLDgyLjM0NjgsNjIuODNsLTEuMzQuOTIzMmEyLjA3LDIuMDcsMCwwLDAtLjM5MjEtLjYzOTEsMi4wMDEsMi4wMDEsMCwwLDAtLjUyNDktLjQxMDcsMi4zODQyLDIuMzg0MiwwLDAsMC0uNTg4Ny0uMjIxMiwyLjU5ODYsMi41OTg2LDAsMCwwLS41ODE0LS4wNywyLjE2OTIsMi4xNjkyLDAsMCwwLTEuMDg4LjI2NTQsMi40NDUyLDIuNDQ1MiwwLDAsMC0uNzc3LjY5LDMuMDgzOSwzLjA4MzksMCwwLDAtLjQ2ODMuOTYxMywzLjc0ODgsMy43NDg4LDAsMCwwLS4xNTg1LDEuMDY4MywzLjYxOTQsMy42MTk0LDAsMCwwLC4xODMyLDEuMTQ0NCwzLjA4NzYsMy4wODc2LDAsMCwwLC41MTg3Ljk2NzUsMi42MDE0LDIuNjAxNCwwLDAsMCwuODAzOS42NzEsMi4xMTA2LDIuMTEwNiwwLDAsMCwxLjAyNC4yNTIxLDIuNDQ4MSwyLjQ0ODEsMCwwLDAsLjU5MzktLjA3NTEsMi4yOTgyLDIuMjk4MiwwLDAsMCwuNTg4Ny0uMjQwOCwyLjI1NDMsMi4yNTQzLDAsMCwwLC41MjQ4LS40MjQsMi4wOTEsMi4wOTEsMCwwLDAsLjM5MjEtLjYyNTdsMS40Mjg1LjgyMjJhMi42MiwyLjYyLDAsMCwxLS41ODc2Ljg5MTMsMy43NTQ0LDMuNzU0NCwwLDAsMS0uODc5LjY1MTUsNC41NzI0LDQuNTcyNCwwLDAsMS0xLjAzNzQuNDA0NCw0LjMyMDksNC4zMjA5LDAsMCwxLTEuMDc0NC4xMzksMy42NDA5LDMuNjQwOSwwLDAsMS0xLjcxMzYtLjQwNDQsNC41LDQuNSwwLDAsMS0xLjM0MTEtMS4wNTZBNC44NTUzLDQuODU1MywwLDAsMSw3NC45OCw2Ny4wMzUsNC43ODQxLDQuNzg0MSwwLDAsMSw3NC42Nyw2NS4zNDZaIi8+PHBhdGggY2xhc3M9ImNscy0zIiBkPSJNODguMTksNjkuOTYyYTMuODY4OCwzLjg2ODgsMCwwLDEtMS43MzIxLS4zODZBNC4yOTcsNC4yOTcsMCwwLDEsODUuMTEsNjguNTUyYTQuNjExNCw0LjYxMTQsMCwwLDEtLjg2NjYtMS40NjA1LDQuODM0Miw0LjgzNDIsMCwwLDEtLjMwMjUtMS42ODE2LDQuNzI4LDQuNzI4LDAsMCwxLDEuMjE5NS0zLjE3NTEsNC4zNTg2LDQuMzU4NiwwLDAsMSwxLjM2LTEuMDA1NSwzLjkzMjgsMy45MzI4LDAsMCwxLDEuNzA3NC0uMzcyNiwzLjc3LDMuNzcsMCwwLDEsMS43MzMxLjM5ODQsNC4zNTUzLDQuMzU1MywwLDAsMSwxLjM0LDEuMDQzNiw0LjcyNjcsNC43MjY3LDAsMCwxLC44NiwxLjQ2NjYsNC43OTkzLDQuNzk5MywwLDAsMSwuMzAzNiwxLjY2OTMsNC42MTM3LDQuNjEzNywwLDAsMS0uMzIzMSwxLjcxMzVBNC42ODU2LDQuNjg1NiwwLDAsMSw5MS4yNSw2OC41OWE0LjMzMSw0LjMzMSwwLDAsMS0xLjM1MzQuOTk5NEEzLjkzMjgsMy45MzI4LDAsMCwxLDg4LjE5LDY5Ljk2MlpNODUuNjk4OSw2NS40MWEzLjc1MjMsMy43NTIzLDAsMCwwLC4xNywxLjEyNDgsMy4wNTgzLDMuMDU4MywwLDAsMCwuNDk0Ljk2MTMsMi40NTcsMi40NTcsMCwwLDAsLjc5LjY3LDIuMTk1MywyLjE5NTMsMCwwLDAsMS4wNjIxLjI1MzIsMi4xNDQ4LDIuMTQ0OCwwLDAsMCwxLjA2ODMtLjI1OTMsMi40Mzc4LDIuNDM3OCwwLDAsMCwuNzc4MS0uNjksMy4xOSwzLjE5LDAsMCwwLC40ODA2LS45Njc1LDMuNzMxNCwzLjczMTQsMCwwLDAsLjE2NDctMS4wOTI5QTMuNjMxMywzLjYzMTMsMCwwLDAsOTAuNTMsNjQuMjg0YTMuMTU5MywzLjE1OTMsMCwwLDAtLjUtLjk2MTQsMi40MzYsMi40MzYsMCwwLDAtLjc4NDItLjY2MzgsMi4xNzY5LDIuMTc2OSwwLDAsMC0xLjA0MjYtLjI0NjksMi4xNDUsMi4xNDUsMCwwLDAtMS4wNjkzLjI1OTMsMi41MzIzLDIuNTMyMywwLDAsMC0uNzg0My42ODM0LDMuMDQ0NywzLjA0NDcsMCwwLDAtLjQ4NjguOTYxM0EzLjczMiwzLjczMiwwLDAsMCw4NS42OTg5LDY1LjQxWiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTk2LjQ0NzcsNjQuMTQ1djUuNzU0Mkg5NC43MDIyVjYwLjkyaDEuMzUzNGw0LjY4LDUuODkzMXYtNS44OEgxMDIuNDh2OC45NjYzaC0xLjQxNjFaIi8+PHBhdGggY2xhc3M9ImNscy0zIiBkPSJNMTEwLjU5OSw2My4yNzIyYTIuMTg0MywyLjE4NDMsMCwwLDAtLjMyMjEtLjI0MDgsMy45NzkyLDMuOTc5MiwwLDAsMC0uNTY5Mi0uMjk2NCw1LjAyNzUsNS4wMjc1LDAsMCwwLS43MjY2LS4yNDcsMy4yMSwzLjIxLDAsMCwwLS43OTc2LS4xMDA4LDEuNzg0OSwxLjc4NDksMCwwLDAtMS4wNzQ0LjI2NTQuODc2MS44NzYxLDAsMCwwLS4zNTQxLjc0NjIuNzY0NS43NjQ1LDAsMCwwLC4xMzI3LjQ2MTIsMS4xNDU5LDEuMTQ1OSwwLDAsMCwuMzg2LjMyMzEsMy4xODU1LDMuMTg1NSwwLDAsMCwuNjM4LjI1MjJxLjM4Ni4xMTQxLjg5MjQuMjQwNy42NTYxLjE3NzYsMS4xOTQ5LjM3ODhhMy4yNCwzLjI0LDAsMCwxLC45MS41MDY0LDIuMDk4LDIuMDk4LDAsMCwxLC41NzYzLjcyNzYsMi40MDgzLDIuNDA4MywwLDAsMSwuMjAxOCwxLjA0MjUsMi41OTY0LDIuNTk2NCwwLDAsMS0uMjcxOCwxLjIzMywyLjI5OCwyLjI5OCwwLDAsMS0uNzI3Ni44Mjg1LDMuMDk4NywzLjA5ODcsMCwwLDEtMS4wNjIxLjQ2MjFBNS40MTg4LDUuNDE4OCwwLDAsMSwxMDguMzYwNSw3MGE2Ljc0MTksNi43NDE5LDAsMCwxLTEuOTk3Ni0uMzAzNiw2LjE0NzQsNi4xNDc0LDAsMCwxLTEuNzctLjg1OTNsLjc3MDgtMS41MDU4YTIuNDMyNSwyLjQzMjUsMCwwLDAsLjQxMTcuMjk3NSw1Ljk4ODgsNS45ODg4LDAsMCwwLC43MDE5LjM2NjQsNS4zMyw1LjMzLDAsMCwwLC44OTc0LjMxLDQuMDU0NSw0LjA1NDUsMCwwLDAsMS4wMTE4LjEyNjVxMS40NDE4LDAsMS40NDE4LS45MjMxYS43Nzg5Ljc3ODksMCwwLDAtLjE2NDYtLjUwNTMsMS4zODUxLDEuMzg1MSwwLDAsMC0uNDY4My0uMzU0MSw0LjQwNjIsNC40MDYyLDAsMCwwLS43MzI4LS4yNzg5cS0uNDMwOC0uMTI1MS0uOTYxMy0uMjY1NWE4LjE0MzcsOC4xNDM3LDAsMCwxLTEuMTItLjM4NDksMy4wNDk0LDMuMDQ5NCwwLDAsMS0uNzktLjQ4NzksMS43OCwxLjc4LDAsMCwxLS40NzM0LS42NTY2LDIuMzE3MywyLjMxNzMsMCwwLDEtLjE1ODYtLjg5ODUsMi43OTEsMi43OTEsMCwwLDEsLjI1MzMtMS4yMTQ0LDIuNDU3NCwyLjQ1NzQsMCwwLDEsLjcwMTktLjg4NTEsMy4xNzU0LDMuMTc1NCwwLDAsMSwxLjA0MjUtLjUzNzIsNC4zMDM5LDQuMzAzOSwwLDAsMSwxLjI3ODMtLjE4MzMsNC45NDA4LDQuOTQwOCwwLDAsMSwxLjc0NDQuMjk3NSw2LjQ5MTcsNi40OTE3LDAsMCwxLDEuMzkxNS43MDE5WiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTEyMC41NjQ2LDYyLjQ1aC0yLjg1ODF2Ny40NDkySDExNS45NjFWNjIuNDVoLTIuODdWNjAuOTJoNy40NzRaIi8+PHBhdGggY2xhc3M9ImNscy0zIiBkPSJNMTIyLjU3NDYsNjkuODk5MlY2MC45MmgzLjk3MTdhMi41NDczLDIuNTQ3MywwLDAsMSwxLjE0NDQuMjU5NCwyLjk0NTUsMi45NDU1LDAsMCwxLC45MDMxLjY4MzQsMy4yMSwzLjIxLDAsMCwxLC41OTQ5Ljk2MTIsMi44OTUsMi44OTUsMCwwLDEsLjIxNSwxLjA4MDcsMi45ODA5LDIuOTgwOSwwLDAsMS0uNDM2MywxLjU4NywyLjUxMTEsMi41MTExLDAsMCwxLTEuMTgyLDEuMDMxMmwyLjExMTMsMy4zNzY4aC0xLjk3MjlsLTEuODg0LTMuMDFoLTEuNzJ2My4wMVptMS43NDU1LTQuNTQwOGgyLjE4ODFhLjkzMTcuOTMxNywwLDAsMCwuNDQ4Ny0uMTEzMiwxLjE0NjcsMS4xNDY3LDAsMCwwLC4zNi0uMzEsMS41NDQ1LDEuNTQ0NSwwLDAsMCwuMjQwOS0uNDYyLDEuNzk2NiwxLjc5NjYsMCwwLDAsLjA4ODUtLjU2OTIsMS42MTQyLDEuNjE0MiwwLDAsMC0uMTAxOS0uNTgxNiwxLjUxNDYsMS41MTQ2LDAsMCwwLS4yNzE2LS40NjIsMS4yMiwxLjIyLDAsMCwwLS4zOTIyLS4zMDI3LDEuMDExMSwxLjAxMTEsMCwwLDAtLjQ0ODctLjEwNzlIMTI0LjMyWiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTEzNS42NzY2LDY4LjQxOTJhMiwyLDAsMCwwLDEuMDQzNy0uMjUzMiwyLjAyLDIuMDIsMCwwLDAsLjY4MzQtLjY1NzYsMi43MjE0LDIuNzIxNCwwLDAsMCwuMzY2My0uOTI5NCw1LjM0MDksNS4zNDA5LDAsMCwwLC4xMDgxLTEuMDgwNlY2MC45MkgxMzkuNjF2NC41Nzg5YTYuNTU4Niw2LjU1ODYsMCwwLDEtLjIyMTIsMS43MzIxLDMuOTc0LDMuOTc0LDAsMCwxLS42OTU4LDEuNDE2MSwzLjMyNTcsMy4zMjU3LDAsMCwxLTEuMjIwNi45NjE0LDQuNjY3NCw0LjY2NzQsMCwwLDEtMy42MS0uMDE4NiwzLjQxMTgsMy40MTE4LDAsMCwxLTEuMjIwNi0uOTg3LDMuOTMxNywzLjkzMTcsMCwwLDEtLjY3NjItMS40MjI0LDYuNzEyNyw2LjcxMjcsMCwwLDEtLjIwOS0xLjY4MTZWNjAuOTJoMS43NDU2djQuNTc4OWE1LjQ3NTcsNS40NzU3LDAsMCwwLC4xMDcsMS4wOTI5LDIuNzI3OCwyLjcyNzgsMCwwLDAsLjM2NzQuOTMsMS45MDM5LDEuOTAzOSwwLDAsMCwxLjcuODk3NFoiLz48cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0xNDEuNzA4Nyw2NS4zNDZBNC43MjgsNC43MjgsMCwwLDEsMTQyLDYzLjcyMWE0LjUwOTEsNC41MDkxLDAsMCwxLC44NDA4LTEuNDM1Nyw0LjI1MjYsNC4yNTI2LDAsMCwxLDEuMzQ3Mi0xLjAyNCw0LjA3LDQuMDcsMCwwLDEsMS44MjA2LS4zOTIyLDMuODcyNSwzLjg3MjUsMCwwLDEsMi4wODExLjU0NDQsMy4zNDM5LDMuMzQzOSwwLDAsMSwxLjI5NTcsMS40MTYybC0xLjM0LjkyMzJhMi4wNywyLjA3LDAsMCwwLS4zOTIxLS42MzkxLDIuMDAxLDIuMDAxLDAsMCwwLS41MjQ5LS40MTA3LDIuMzg0MiwyLjM4NDIsMCwwLDAtLjU4ODctLjIyMTIsMi41OTg3LDIuNTk4NywwLDAsMC0uNTgxNS0uMDcsMi4xNjkxLDIuMTY5MSwwLDAsMC0xLjA4NzkuMjY1NCwyLjQ0NTIsMi40NDUyLDAsMCwwLS43NzcuNjksMy4wODM5LDMuMDgzOSwwLDAsMC0uNDY4My45NjEzLDMuNzQ4OCwzLjc0ODgsMCwwLDAtLjE1ODUsMS4wNjgzLDMuNjE5NCwzLjYxOTQsMCwwLDAsLjE4MzIsMS4xNDQ0LDMuMDg3NiwzLjA4NzYsMCwwLDAsLjUxODcuOTY3NSwyLjYwMTQsMi42MDE0LDAsMCwwLC44MDM5LjY3MSwyLjExMDYsMi4xMTA2LDAsMCwwLDEuMDI0LjI1MjEsMi40NDg4LDIuNDQ4OCwwLDAsMCwuNTkzOS0uMDc1MSwyLjI5ODIsMi4yOTgyLDAsMCwwLC41ODg3LS4yNDA4LDIuMjU0MywyLjI1NDMsMCwwLDAsLjUyNDgtLjQyNCwyLjA5MSwyLjA5MSwwLDAsMCwuMzkyMS0uNjI1N2wxLjQyODUuODIyMmEyLjYyMTEsMi42MjExLDAsMCwxLS41ODc2Ljg5MTMsMy43NTQ0LDMuNzU0NCwwLDAsMS0uODc5LjY1MTUsNC41NzI0LDQuNTcyNCwwLDAsMS0xLjAzNzQuNDA0NCw0LjMyMTEsNC4zMjExLDAsMCwxLTEuMDc0NS4xMzksMy42NDA4LDMuNjQwOCwwLDAsMS0xLjcxMzUtLjQwNDQsNC41LDQuNSwwLDAsMS0xLjM0MTEtMS4wNTYsNC44NTUzLDQuODU1MywwLDAsMS0uODcyNy0xLjQ3ODlBNC43ODQxLDQuNzg0MSwwLDAsMSwxNDEuNzA4Nyw2NS4zNDZaIi8+PHBhdGggY2xhc3M9ImNscy0zIiBkPSJNMTU4LjI2MzEsNjIuNDVoLTIuODU4djcuNDQ5MkgxNTMuNjZWNjIuNDVoLTIuODdWNjAuOTJoNy40NzM5WiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTE2MC4yNzQyLDY5Ljg5OTJWNjAuOTMyOUgxNjIuMDJ2OC45NjYzWiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTE2OC41MDY2LDY5Ljk2MmEzLjg2OTEsMy44NjkxLDAsMCwxLTEuNzMyMS0uMzg2LDQuMjk5Myw0LjI5OTMsMCwwLDEtMS4zNDcyLTEuMDI0LDQuNjA5Myw0LjYwOTMsMCwwLDEtLjg2NjUtMS40NjA1LDQuODMyLDQuODMyLDAsMCwxLS4zMDI2LTEuNjgxNiw0LjczMDYsNC43MzA2LDAsMCwxLDEuMjItMy4xNzUxLDQuMzYxLDQuMzYxLDAsMCwxLDEuMzYtMS4wMDU1LDMuOTMzNCwzLjkzMzQsMCwwLDEsMS43MDc0LS4zNzI2LDMuNzcsMy43NywwLDAsMSwxLjczMzIuMzk4NCw0LjM1NjUsNC4zNTY1LDAsMCwxLDEuMzQsMS4wNDM2LDQuNzI2Nyw0LjcyNjcsMCwwLDEsLjg2LDEuNDY2Niw0LjgwMTYsNC44MDE2LDAsMCwxLC4zMDM2LDEuNjY5Myw0LjYxMzgsNC42MTM4LDAsMCwxLS4zMjMyLDEuNzEzNSw0LjY4MzQsNC42ODM0LDAsMCwxLS44OTEyLDEuNDQxOSw0LjMzMjEsNC4zMzIxLDAsMCwxLTEuMzUzNC45OTk0QTMuOTMzNSwzLjkzMzUsMCwwLDEsMTY4LjUwNjYsNjkuOTYyWk0xNjYuMDE2LDY1LjQxYTMuNzUyMywzLjc1MjMsMCwwLDAsLjE3LDEuMTI0OCwzLjA2LDMuMDYsMCwwLDAsLjQ5NC45NjEzLDIuNDU3MywyLjQ1NzMsMCwwLDAsLjc5MDUuNjcsMi4xOTQ5LDIuMTk0OSwwLDAsMCwxLjA2Mi4yNTMyLDIuMTQ1LDIuMTQ1LDAsMCwwLDEuMDY4NC0uMjU5MywyLjQzODksMi40Mzg5LDAsMCwwLC43NzgxLS42OSwzLjE5MjYsMy4xOTI2LDAsMCwwLC40ODA2LS45Njc1LDMuNzM0NiwzLjczNDYsMCwwLDAsLjE2NDYtMS4wOTI5LDMuNjM0MiwzLjYzNDIsMCwwLDAtLjE3Ny0xLjEyNTksMy4xNjE1LDMuMTYxNSwwLDAsMC0uNS0uOTYxNCwyLjQzNjMsMi40MzYzLDAsMCwwLS43ODQzLS42NjM4LDIuMTc2MywyLjE3NjMsMCwwLDAtMS4wNDI2LS4yNDY5LDIuMTQ1LDIuMTQ1LDAsMCwwLTEuMDY5My4yNTkzLDIuNTM0NiwyLjUzNDYsMCwwLDAtLjc4NDMuNjgzNCwzLjA0ODksMy4wNDg5LDAsMCwwLS40ODY4Ljk2MTNBMy43MzUzLDMuNzM1MywwLDAsMCwxNjYuMDE2LDY1LjQxWiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTE3Ni43NjQ5LDY0LjE0NXY1Ljc1NDJoLTEuNzQ1NlY2MC45MmgxLjM1MzRsNC42OCw1Ljg5MzF2LTUuODhoMS43NDQ1djguOTY2M2gtMS40MTYyWiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTE4OC45MzA5LDY1LjM0NmE0LjcyNzksNC43Mjc5LDAsMCwxLC4yOTEyLTEuNjI1LDQuNTA3NSw0LjUwNzUsMCwwLDEsLjg0MDktMS40MzU3LDQuMjUsNC4yNSwwLDAsMSwxLjM0NzItMS4wMjQsNC4wNjk1LDQuMDY5NSwwLDAsMSwxLjgyMDYtLjM5MjIsMy44NzI0LDMuODcyNCwwLDAsMSwyLjA4MS41NDQ0LDMuMzQ1NCwzLjM0NTQsMCwwLDEsMS4yOTU4LDEuNDE2MmwtMS4zNC45MjMyYTIuMDcsMi4wNywwLDAsMC0uMzkyMi0uNjM5MSwxLjk5NzgsMS45OTc4LDAsMCwwLS41MjQ5LS40MTA3LDIuMzgxMywyLjM4MTMsMCwwLDAtLjU4ODctLjIyMTIsMi41OTgxLDIuNTk4MSwwLDAsMC0uNTgxNS0uMDcsMi4xNjg1LDIuMTY4NSwwLDAsMC0xLjA4NzguMjY1NCwyLjQ0NTIsMi40NDUyLDAsMCwwLS43NzcuNjksMy4wODM5LDMuMDgzOSwwLDAsMC0uNDY4My45NjEzLDMuNzQ4OCwzLjc0ODgsMCwwLDAtLjE1ODUsMS4wNjgzLDMuNjEzOCwzLjYxMzgsMCwwLDAsLjE4MzIsMS4xNDQ0LDMuMDgzNSwzLjA4MzUsMCwwLDAsLjUxODcuOTY3NSwyLjYwMSwyLjYwMSwwLDAsMCwuODAzOC42NzEsMi4xMTA5LDIuMTEwOSwwLDAsMCwxLjAyNC4yNTIxLDIuNDQ4MSwyLjQ0ODEsMCwwLDAsLjU5MzktLjA3NTEsMi4yOTQ3LDIuMjk0NywwLDAsMCwuNTg4Ni0uMjQwOCwyLjI1MDYsMi4yNTA2LDAsMCwwLC41MjQ5LS40MjQsMi4wODkzLDIuMDg5MywwLDAsMCwuMzkyMi0uNjI1N2wxLjQyODUuODIyMmEyLjYyMjgsMi42MjI4LDAsMCwxLS41ODc3Ljg5MTMsMy43NTM5LDMuNzUzOSwwLDAsMS0uODc4OS42NTE1LDQuNTczMiw0LjU3MzIsMCwwLDEtMS4wMzc1LjQwNDQsNC4zMiw0LjMyLDAsMCwxLTEuMDc0NC4xMzksMy42NDE1LDMuNjQxNSwwLDAsMS0xLjcxMzYtLjQwNDQsNC40OTg2LDQuNDk4NiwwLDAsMS0xLjM0MS0xLjA1Niw0Ljg1NTUsNC44NTU1LDAsMCwxLS44NzI4LTEuNDc4OUE0Ljc4MTcsNC43ODE3LDAsMCwxLDE4OC45MzA5LDY1LjM0NloiLz48cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0yMDYuMzcsNjAuOTJ2OC45OGgtMS43MzIxVjY2LjA2NjVoLTQuMDcyNXYzLjgzMjdIMTk4LjgyVjYwLjkyaDEuNzQ1NXYzLjYzaDQuMDcyNVY2MC45MloiLz48cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0yMTUuMzYyNCw2OC4zNjg4djEuNTNoLTYuMjM0OFY2MC45Mmg2LjEyMTZWNjIuNDVoLTQuMzc2MXYyLjE2MjJoMy43ODEydjEuNDE3MmgtMy43ODEydjIuMzM5NFoiLz48cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0yMjQuOTc0LDY5Ljg5OTJWNjMuOTU0NmwtMi4zMTQ3LDQuNDI2NmgtLjk0NzhsLTIuMzE0Ny00LjQyNjZ2NS45NDQ2aC0xLjc0NTVWNjAuOTJoMS44NzIxbDIuNjU1Myw1LjExLDIuNjgxLTUuMTFoMS44NnY4Ljk4WiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTIyOS40NzU2LDY5Ljg5OTJWNjAuOTMyOWgxLjc0NTV2OC45NjYzWiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTIzMy40NDcyLDY1LjM0NmE0LjcyOCw0LjcyOCwwLDAsMSwuMjkxMy0xLjYyNSw0LjUwNzUsNC41MDc1LDAsMCwxLC44NDA5LTEuNDM1Nyw0LjI1LDQuMjUsMCwwLDEsMS4zNDcyLTEuMDI0LDQuMDcsNC4wNywwLDAsMSwxLjgyMDYtLjM5MjIsMy44NzIyLDMuODcyMiwwLDAsMSwyLjA4MS41NDQ0QTMuMzQ0NywzLjM0NDcsMCwwLDEsMjQxLjEyNCw2Mi44M2wtMS4zNC45MjMyYTIuMDY4NSwyLjA2ODUsMCwwLDAtLjM5MjItLjYzOTEsMS45OTc4LDEuOTk3OCwwLDAsMC0uNTI0OS0uNDEwNywyLjM4MzYsMi4zODM2LDAsMCwwLS41ODg2LS4yMjEyLDIuNiwyLjYsMCwwLDAtLjU4MTUtLjA3LDIuMTY4NSwyLjE2ODUsMCwwLDAtMS4wODc4LjI2NTQsMi40NDM0LDIuNDQzNCwwLDAsMC0uNzc3MS42OSwzLjA4MzksMy4wODM5LDAsMCwwLS40NjgzLjk2MTMsMy43NDg4LDMuNzQ4OCwwLDAsMC0uMTU4NSwxLjA2ODMsMy42MTk0LDMuNjE5NCwwLDAsMCwuMTgzMSwxLjE0NDQsMy4wODU4LDMuMDg1OCwwLDAsMCwuNTE4OC45Njc1LDIuNiwyLjYsMCwwLDAsLjgwMzguNjcxLDIuMTExLDIuMTExLDAsMCwwLDEuMDI0MS4yNTIxLDIuNDQ4LDIuNDQ4LDAsMCwwLC41OTM4LS4wNzUxLDIuMjk2OCwyLjI5NjgsMCwwLDAsLjU4ODctLjI0MDgsMi4yNTI3LDIuMjUyNywwLDAsMCwuNTI0OS0uNDI0LDIuMDg4OCwyLjA4ODgsMCwwLDAsLjM5Mi0uNjI1N2wxLjQyODYuODIyMmEyLjYyMTQsMi42MjE0LDAsMCwxLS41ODc3Ljg5MTMsMy43NTU5LDMuNzU1OSwwLDAsMS0uODc4OS42NTE1LDQuNTc2MSw0LjU3NjEsMCwwLDEtMS4wMzc0LjQwNDQsNC4zMjIzLDQuMzIyMywwLDAsMS0xLjA3NDUuMTM5LDMuNjQxNSwzLjY0MTUsMCwwLDEtMS43MTM2LS40MDQ0LDQuNSw0LjUsMCwwLDEtMS4zNDEtMS4wNTYsNC44NTM1LDQuODUzNSwwLDAsMS0uODcyOC0xLjQ3ODlBNC43ODQxLDQuNzg0MSwwLDAsMSwyMzMuNDQ3Miw2NS4zNDZaIi8+PHBhdGggY2xhc3M9ImNscy0zIiBkPSJNMjQyLjMsNjkuODk5MmwzLjU0LTguOThoMS40MTYybDMuNTI5LDguOThIMjQ4Ljk0bC0uODIyMy0yLjIzODVIMjQ0Ljk2OGwtLjgyMTMsMi4yMzg1Wm00LjI0ODUtNy4wOTUyLTEuMjksMy42M2gyLjU0MjFaIi8+PHBhdGggY2xhc3M9ImNscy0zIiBkPSJNMjUyLjYzMTMsNjkuODk5MlY2MC45MmgxLjc0NTV2Ny40NDkzaDQuNTc3OHYxLjUzWiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTI2Ni4zMDIsNjMuMjcyMmEyLjE5MjMsMi4xOTIzLDAsMCwwLS4zMjIyLS4yNDA4LDMuOTcyMywzLjk3MjMsMCwwLDAtLjU2OTEtLjI5NjQsNS4wMjc1LDUuMDI3NSwwLDAsMC0uNzI2Ni0uMjQ3LDMuMjA5MywzLjIwOTMsMCwwLDAtLjc5NzctLjEwMDgsMS43ODQ5LDEuNzg0OSwwLDAsMC0xLjA3NDQuMjY1NC44NzY0Ljg3NjQsMCwwLDAtLjM1NDEuNzQ2Mi43NjQ1Ljc2NDUsMCwwLDAsLjEzMjguNDYxMiwxLjE0NDksMS4xNDQ5LDAsMCwwLC4zODYuMzIzMSwzLjE4MTcsMy4xODE3LDAsMCwwLC42MzgxLjI1MjJxLjM4NTkuMTE0MS44OTIyLjI0MDcuNjU2MS4xNzc2LDEuMTk0OS4zNzg4YTMuMjM3MSwzLjIzNzEsMCwwLDEsLjkxLjUwNjQsMi4wOTcxLDIuMDk3MSwwLDAsMSwuNTc2NC43Mjc2LDIuNDA2OSwyLjQwNjksMCwwLDEsLjIwMTcsMS4wNDI1LDIuNTk3NiwyLjU5NzYsMCwwLDEtLjI3MTcsMS4yMzMsMi4yOTgyLDIuMjk4MiwwLDAsMS0uNzI3Ny44Mjg1LDMuMDk3OCwzLjA5NzgsMCwwLDEtMS4wNjIxLjQ2MjFBNS40MTgsNS40MTgsMCwwLDEsMjY0LjA2MzUsNzBhNi43NDM1LDYuNzQzNSwwLDAsMS0xLjk5NzctLjMwMzYsNi4xNSw2LjE1LDAsMCwxLTEuNzctLjg1OTNsLjc3MDktMS41MDU4YTIuNDM2NywyLjQzNjcsMCwwLDAsLjQxMTcuMjk3NSw1Ljk4MDgsNS45ODA4LDAsMCwwLC43MDE5LjM2NjQsNS4zMjU0LDUuMzI1NCwwLDAsMCwuODk3NS4zMSw0LjA1MjMsNC4wNTIzLDAsMCwwLDEuMDExNi4xMjY1cTEuNDQxOCwwLDEuNDQxOS0uOTIzMWEuNzc3OC43Nzc4LDAsMCwwLS4xNjQ3LS41MDUzLDEuMzgzNiwxLjM4MzYsMCwwLDAtLjQ2ODItLjM1NDEsNC40MSw0LjQxLDAsMCwwLS43MzI4LS4yNzg5cS0uNDMwNi0uMTI1MS0uOTYxMy0uMjY1NWE4LjE1LDguMTUsMCwwLDEtMS4xMi0uMzg0OSwzLjA1NDUsMy4wNTQ1LDAsMCwxLS43OS0uNDg3OSwxLjc4MTUsMS43ODE1LDAsMCwxLS40NzM0LS42NTY2LDIuMzE3MywyLjMxNzMsMCwwLDEtLjE1ODUtLjg5ODUsMi43OTEsMi43OTEsMCwwLDEsLjI1MzItMS4yMTQ0LDIuNDU4NCwyLjQ1ODQsMCwwLDEsLjcwMTktLjg4NTFBMy4xNzg0LDMuMTc4NCwwLDAsMSwyNjIuNjYsNjEuMDRhNC4zMDM5LDQuMzAzOSwwLDAsMSwxLjI3ODMtLjE4MzMsNC45NDE0LDQuOTQxNCwwLDAsMSwxLjc0NDUuMjk3NSw2LjQ4NjIsNi40ODYyLDAsMCwxLDEuMzkxNC43MDE5WiIvPjwvc3ZnPg==" alt="Polywed Construction Chemicals">
+    <div class="meta">Design price list for <b>Polywed</b><br>Prepared by <b>Sarah's Design Studio</b> · November 2026</div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="kicker">Design services price list · 2026</div>
+    <div class="bar-title"><h1>A fixed price for every design deliverable.</h1></div>
+    <p class="lede">Social media, stationery, promotional material and packaging adaptations, built on Polywed's identity. Each item has one fixed price. Every month Polywed ticks the items it needs on this list, within a monthly fee of 1,500 SAR.</p>
+    <div class="facts">
+      <span><b>19</b> priced deliverables</span>
+      <span><b>1,500</b> SAR monthly fee</span>
+      <span><b>2</b> revision rounds included</span>
+      <span><b>6 months</b> fixed prices</span>
+    </div>
+  </div>
+</div>
+
+<section id="menu">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">Price list</div>
+      <div class="bar-title"><h2>Price per deliverable</h2></div>
+      <p>Tick the items needed this month and set the quantity. Prices are per item, in Saudi riyals. The Price column applies to items ticked in the monthly order. Requests added after the 1st of the month, outside the monthly order, cost the price in the Added after the 1st column and are billed on the next month's invoice. Items in the monthly order are delivered during the new month. Requests added after the 1st are delivered within 3 to 5 working days of an approved brief. Super urgent same-day delivery costs double the price and is paid immediately, before work begins.</p>
+    </div>
+    
+  <div class="cat" style="--c:var(--c-sm)">
+    <div class="cat-head"><div class="code-tab">SM</div><h3>Social media</h3></div>
+    <div class="rows">
+      <div class="row pl headrow"><span>Tick</span><span>Code</span><span>Item</span><span style="text-align:right">Price</span><span style="text-align:right">Added after the 1st</span><span style="text-align:right">Same day</span><span style="text-align:right">Qty</span></div>
+      
+      <label class="row pl" data-code="SM1" data-name="Static post" data-price="150"><span class="tick"><input type="checkbox" aria-label="Choose SM1 Static post"></span><span class="code">SM1</span><span class="name">Static post<small>Single frame, English or Arabic</small></span><span class="price-main num">150 SAR</span><span class="sar num">240 SAR</span><span class="sar num">300 SAR</span><span class="q"><input type="number" min="1" max="99" value="1" aria-label="Quantity of SM1"></span></label>
+      <label class="row pl" data-code="SM2" data-name="Reel, 15–30 seconds" data-price="300"><span class="tick"><input type="checkbox" aria-label="Choose SM2 Reel, 15–30 seconds"></span><span class="code">SM2</span><span class="name">Reel, 15–30 seconds<small>Motion graphics from brand assets and product images</small></span><span class="price-main num">300 SAR</span><span class="sar num">480 SAR</span><span class="sar num">600 SAR</span><span class="q"><input type="number" min="1" max="99" value="1" aria-label="Quantity of SM2"></span></label>
+      <label class="row pl" data-code="SM3" data-name="Story or format resize" data-price="50"><span class="tick"><input type="checkbox" aria-label="Choose SM3 Story or format resize"></span><span class="code">SM3</span><span class="name">Story or format resize<small>A finished design adapted to 9:16, 1:1 or 16:9</small></span><span class="price-main num">50 SAR</span><span class="sar num">80 SAR</span><span class="sar num">100 SAR</span><span class="q"><input type="number" min="1" max="99" value="1" aria-label="Quantity of SM3"></span></label>
+    </div>
+  </div>
+  <div class="cat" style="--c:var(--c-st)">
+    <div class="cat-head"><div class="code-tab">ST</div><h3>Stationery</h3></div>
+    <div class="rows">
+      <div class="row pl headrow"><span>Tick</span><span>Code</span><span>Item</span><span style="text-align:right">Price</span><span style="text-align:right">Added after the 1st</span><span style="text-align:right">Same day</span><span style="text-align:right">Qty</span></div>
+      
+      <label class="row pl" data-code="ST1" data-name="Email signatures" data-price="100"><span class="tick"><input type="checkbox" aria-label="Choose ST1 Email signatures"></span><span class="code">ST1</span><span class="name">Email signatures<small>Set of 5 people, English and Arabic, ready to install</small></span><span class="price-main num">100 SAR</span><span class="sar num">160 SAR</span><span class="sar num">200 SAR</span><span class="q"><input type="number" min="1" max="99" value="1" aria-label="Quantity of ST1"></span></label>
+      <label class="row pl" data-code="ST2" data-name="Business cards" data-price="100"><span class="tick"><input type="checkbox" aria-label="Choose ST2 Business cards"></span><span class="code">ST2</span><span class="name">Business cards<small>Set of 5 people, on the existing card design</small></span><span class="price-main num">100 SAR</span><span class="sar num">160 SAR</span><span class="sar num">200 SAR</span><span class="q"><input type="number" min="1" max="99" value="1" aria-label="Quantity of ST2"></span></label>
+      <label class="row pl" data-code="ST3" data-name="Envelope" data-price="150"><span class="tick"><input type="checkbox" aria-label="Choose ST3 Envelope"></span><span class="code">ST3</span><span class="name">Envelope<small>DL or C4, print-ready</small></span><span class="price-main num">150 SAR</span><span class="sar num">240 SAR</span><span class="sar num">300 SAR</span><span class="q"><input type="number" min="1" max="99" value="1" aria-label="Quantity of ST3"></span></label>
+      <label class="row pl" data-code="ST4" data-name="A4 letterhead" data-price="200"><span class="tick"><input type="checkbox" aria-label="Choose ST4 A4 letterhead"></span><span class="code">ST4</span><span class="name">A4 letterhead<small>Print file plus editable Word template</small></span><span class="price-main num">200 SAR</span><span class="sar num">320 SAR</span><span class="sar num">400 SAR</span><span class="q"><input type="number" min="1" max="99" value="1" aria-label="Quantity of ST4"></span></label>
+      <label class="row pl" data-code="ST5" data-name="A4 template" data-price="250"><span class="tick"><input type="checkbox" aria-label="Choose ST5 A4 template"></span><span class="code">ST5</span><span class="name">A4 template<small>Quotation, product data sheet or certificate</small></span><span class="price-main num">250 SAR</span><span class="sar num">400 SAR</span><span class="sar num">500 SAR</span><span class="q"><input type="number" min="1" max="99" value="1" aria-label="Quantity of ST5"></span></label>
+    </div>
+  </div>
+  <div class="cat" style="--c:var(--c-pr)">
+    <div class="cat-head"><div class="code-tab">PR</div><h3>Promotional material</h3></div>
+    <div class="rows">
+      <div class="row pl headrow"><span>Tick</span><span>Code</span><span>Item</span><span style="text-align:right">Price</span><span style="text-align:right">Added after the 1st</span><span style="text-align:right">Same day</span><span style="text-align:right">Qty</span></div>
+      
+      <label class="row pl" data-code="PR1" data-name="Roll-up or pop-up stand" data-price="300"><span class="tick"><input type="checkbox" aria-label="Choose PR1 Roll-up or pop-up stand"></span><span class="code">PR1</span><span class="name">Roll-up or pop-up stand<small>Print-ready</small></span><span class="price-main num">300 SAR</span><span class="sar num">480 SAR</span><span class="sar num">600 SAR</span><span class="q"><input type="number" min="1" max="99" value="1" aria-label="Quantity of PR1"></span></label>
+      <label class="row pl" data-code="PR2" data-name="Paper holder" data-price="200"><span class="tick"><input type="checkbox" aria-label="Choose PR2 Paper holder"></span><span class="code">PR2</span><span class="name">Paper holder<small>Brochure display header and panels</small></span><span class="price-main num">200 SAR</span><span class="sar num">320 SAR</span><span class="sar num">400 SAR</span><span class="q"><input type="number" min="1" max="99" value="1" aria-label="Quantity of PR2"></span></label>
+      <label class="row pl" data-code="PR3" data-name="Gift bag" data-price="300"><span class="tick"><input type="checkbox" aria-label="Choose PR3 Gift bag"></span><span class="code">PR3</span><span class="name">Gift bag<small>On the printer's template</small></span><span class="price-main num">300 SAR</span><span class="sar num">480 SAR</span><span class="sar num">600 SAR</span><span class="q"><input type="number" min="1" max="99" value="1" aria-label="Quantity of PR3"></span></label>
+    </div>
+  </div>
+  <div class="cat" style="--c:var(--c-pk)">
+    <div class="cat-head"><div class="code-tab">PK</div><h3>Packaging adaptations</h3></div>
+    <div class="rows">
+      <div class="row pl headrow"><span>Tick</span><span>Code</span><span>Item</span><span style="text-align:right">Price</span><span style="text-align:right">Added after the 1st</span><span style="text-align:right">Same day</span><span style="text-align:right">Qty</span></div>
+      
+      <label class="row pl" data-code="PK1" data-name="Paper bag, new product" data-price="300"><span class="tick"><input type="checkbox" aria-label="Choose PK1 Paper bag, new product"></span><span class="code">PK1</span><span class="name">Paper bag, new product<small>On the existing bag layout</small></span><span class="price-main num">300 SAR</span><span class="sar num">480 SAR</span><span class="sar num">600 SAR</span><span class="q"><input type="number" min="1" max="99" value="1" aria-label="Quantity of PK1"></span></label>
+      <label class="row pl" data-code="PK2" data-name="Plastic bucket, generic" data-price="300"><span class="tick"><input type="checkbox" aria-label="Choose PK2 Plastic bucket, generic"></span><span class="code">PK2</span><span class="name">Plastic bucket, generic<small>Shared design for several products</small></span><span class="price-main num">300 SAR</span><span class="sar num">480 SAR</span><span class="sar num">600 SAR</span><span class="q"><input type="number" min="1" max="99" value="1" aria-label="Quantity of PK2"></span></label>
+      <label class="row pl" data-code="PK3" data-name="Plastic bucket, fixed" data-price="300"><span class="tick"><input type="checkbox" aria-label="Choose PK3 Plastic bucket, fixed"></span><span class="code">PK3</span><span class="name">Plastic bucket, fixed<small>Artwork for one product</small></span><span class="price-main num">300 SAR</span><span class="sar num">480 SAR</span><span class="sar num">600 SAR</span><span class="q"><input type="number" min="1" max="99" value="1" aria-label="Quantity of PK3"></span></label>
+      <label class="row pl" data-code="PK4" data-name="Carton box, new product" data-price="300"><span class="tick"><input type="checkbox" aria-label="Choose PK4 Carton box, new product"></span><span class="code">PK4</span><span class="name">Carton box, new product<small>On an existing dieline</small></span><span class="price-main num">300 SAR</span><span class="sar num">480 SAR</span><span class="sar num">600 SAR</span><span class="q"><input type="number" min="1" max="99" value="1" aria-label="Quantity of PK4"></span></label>
+      <label class="row pl" data-code="PK5" data-name="Jerry can label" data-price="250"><span class="tick"><input type="checkbox" aria-label="Choose PK5 Jerry can label"></span><span class="code">PK5</span><span class="name">Jerry can label<small>Front and back</small></span><span class="price-main num">250 SAR</span><span class="sar num">400 SAR</span><span class="sar num">500 SAR</span><span class="q"><input type="number" min="1" max="99" value="1" aria-label="Quantity of PK5"></span></label>
+      <label class="row pl" data-code="PK6" data-name="Jug label, 5 kg or 4 kg" data-price="250"><span class="tick"><input type="checkbox" aria-label="Choose PK6 Jug label, 5 kg or 4 kg"></span><span class="code">PK6</span><span class="name">Jug label, 5 kg or 4 kg<small>Front and back, one size</small></span><span class="price-main num">250 SAR</span><span class="sar num">400 SAR</span><span class="sar num">500 SAR</span><span class="q"><input type="number" min="1" max="99" value="1" aria-label="Quantity of PK6"></span></label>
+      <label class="row pl" data-code="PK7" data-name="Pack size resize" data-price="50"><span class="tick"><input type="checkbox" aria-label="Choose PK7 Pack size resize"></span><span class="code">PK7</span><span class="name">Pack size resize<small>Existing artwork to another size</small></span><span class="price-main num">50 SAR</span><span class="sar num">80 SAR</span><span class="sar num">100 SAR</span><span class="q"><input type="number" min="1" max="99" value="1" aria-label="Quantity of PK7"></span></label>
+      <label class="row pl" data-code="PK8" data-name="Text or data update" data-price="50"><span class="tick"><input type="checkbox" aria-label="Choose PK8 Text or data update"></span><span class="code">PK8</span><span class="name">Text or data update<small>Codes, specs or barcode on existing packaging</small></span><span class="price-main num">50 SAR</span><span class="sar num">80 SAR</span><span class="sar num">100 SAR</span><span class="q"><input type="number" min="1" max="99" value="1" aria-label="Quantity of PK8"></span></label>
+    </div>
+  </div>
+  </div>
+</section>
+
+<section id="example" style="background: var(--mist)">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">This month's order</div>
+      <div class="bar-title"><h2>Monthly bill</h2></div>
+    </div>
+    <div class="bill">
+      <div class="bill-head">Ticked items</div>
+      <div class="bill-body">
+        <div class="bill-list" id="billList"><span class="empty">No items ticked yet.</span></div>
+        <div class="bill-line"><span>Ticked items at list price</span><span class="num" id="billItems">0 SAR</span></div>
+        <div class="bill-line total"><span>Monthly invoice</span><span class="num" id="billTotal">1,500 SAR</span></div>
+        <p class="bill-note">The monthly invoice is 1,500 SAR, even when fewer items or no items are ticked. If the ticked items come to more than 1,500 SAR, the invoice is their full list price. Example: 4 static posts, 1 reel, 1 fixed bucket, email signatures and business cards for 5 people, and 2 resizes come to exactly 1,500 SAR.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">Project work</div>
+      <div class="bar-title"><h2>New packaging, quoted separately</h2></div>
+      <p>A brand-new packaging format is a larger piece of work, so it receives its own written quotation.</p>
+    </div>
+    <div class="projects two">
+      <div class="proj"><h3>New packaging master</h3><div class="from num">from 2,500 SAR</div><p>First design of a new bag, bucket, carton, jerry can or jug. New products on that format are then priced as adaptations from this list.</p></div>
+      <div class="proj"><h3>Packaging range</h3><div class="from num">from 6,500 SAR</div><p>Three or more formats designed together for a new Polywed product line.</p></div>
+    </div>
+    <p class="note">Printing, photography, filming and paid advertising are not included in design fees.</p>
+  </div>
+</section>
+
+<section id="terms">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">Terms</div>
+      <div class="bar-title"><h2>Ordering and invoicing</h2></div>
+    </div>
+    <div class="terms">
+      <div class="term"><b>Monthly fee</b><span>1,500 SAR per month. This is the minimum monthly invoice, charged even if fewer items or no items are ordered that month. Unused value does not carry over to the next month.</span></div>
+      <div class="term"><b>Ordering</b><span>Each month Polywed ticks the items it needs on this list, or sends a purchase order listing them by code, together with the brief and any content.</span></div>
+      <div class="term"><b>Invoicing</b><span>One itemised invoice per month, using the codes and prices from this list: 1,500 SAR, or the total of the ordered items if higher. It is paid at the start of the month, before work begins.</span></div>
+      <div class="term"><b>Delivery</b><span>Items in the monthly order are delivered during the new month. Requests added after the 1st of the month cost the Added after the 1st price and are delivered within 3 to 5 working days of the approved brief.</span></div>
+      <div class="term"><b>Same day</b><span>Super urgent same-day delivery costs double the item price, shown in the Same day column. Payment is due immediately, before work begins.</span></div>
+      <div class="term"><b>Revisions</b><span>2 revision rounds are included in every item. Each extra round is 50 SAR. A change of brief after work has started is a new item.</span></div>
+      <div class="term"><b>VAT</b><span>Prices are in Saudi riyals and exclude VAT where applicable.</span></div>
+      <div class="term"><b>Validity</b><span>These prices are fixed for 6 months from the date of this list.</span></div>
+      <div class="term"><b>Ownership</b><span>Polywed owns the final designs once the invoice is paid. Final files are delivered print-ready and web-ready.</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div><b>Sarah's Design Studio</b><br>Design price list for Polywed Construction Chemicals<br>sarahrabee3.designer@gmail.com · +966 55 620 4075</div>
+    <div>Issued November 2026 · Prices valid for 6 months<br>All prices in Saudi riyals (SAR)</div>
+  </div>
+</footer>
+
+<div class="sticky" aria-live="polite"><div class="wrap"><span>Ticked: <b id="stItems">0 SAR</b></span><span>Monthly invoice: <b id="stTotal">1,500 SAR</b></span><a href="#example">See bill</a></div></div>
+<script>
+(function(){
+  const MIN = 1500, f = n => n.toLocaleString("en-US") + " SAR";
+  const rows = [...document.querySelectorAll(".row.pl[data-code]")];
+  function update(){
+    let sum = 0, lines = [];
+    rows.forEach(r => {
+      const on = r.querySelector(".tick input").checked;
+      r.classList.toggle("on", on);
+      if (!on) return;
+      const q = Math.max(1, parseInt(r.querySelector(".q input").value, 10) || 1);
+      const line = q * +r.dataset.price; sum += line;
+      lines.push(`<div class="bill-line"><span>${r.dataset.code} ${r.dataset.name} × ${q}</span><span class="num">${f(line)}</span></div>`);
+    });
+    const total = Math.max(MIN, sum);
+    document.getElementById("billList").innerHTML = lines.length ? lines.join("") : '<span class="empty">No items ticked yet.</span>';
+    document.getElementById("billItems").textContent = f(sum);
+    document.getElementById("billTotal").textContent = f(total);
+    document.getElementById("stItems").textContent = f(sum);
+    document.getElementById("stTotal").textContent = f(total);
+  }
+  rows.forEach(r => {
+    const q = r.querySelector(".q input");
+    q.addEventListener("click", e => e.stopPropagation());
+    q.addEventListener("input", () => { if (!r.querySelector(".tick input").checked) r.querySelector(".tick input").checked = true; update(); });
+    r.querySelector(".tick input").addEventListener("change", update);
+  });
+  update();
+})();
+</script>
+</body></html>
