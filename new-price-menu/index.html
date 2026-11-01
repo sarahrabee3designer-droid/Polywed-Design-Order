@@ -8,6 +8,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@500;600&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 /* Layout: a printed rate card in Polywed's own language. White sheet, teal bands, isometric cube texture,
    and service codes styled like the product codes on Polywed packaging (T1, G2 ...). Single light look by choice. */
@@ -169,6 +170,55 @@ footer b { color: var(--ink); font-family: var(--display); font-size: 16px; font
   .page-break { break-before: page; }
   .tiers { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
+
+[hidden] { display: none !important; }
+.modes { display: grid; gap: 8px; }
+.mode { display: grid; grid-template-columns: 22px minmax(0,1fr); gap: 10px; align-items: start; border: 1px solid var(--line); padding: 10px 12px; cursor: pointer; background: #fff; }
+.mode input { width: 18px; height: 18px; accent-color: var(--teal); margin: 2px 0 0; }
+.mode b { font-family: var(--display); font-weight: 600; }
+.mode small { display: block; color: var(--muted); font-size: 13px; }
+.mode:has(input:checked) { border-color: var(--teal); box-shadow: inset 4px 0 0 var(--teal-light); }
+.fields { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+.field { display: grid; gap: 4px; min-width: 0; }
+.field.wide { grid-column: 1 / -1; }
+.field label { font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.field input, .field textarea, .field select { width: 100%; border: 1px solid var(--line); background: #fff; padding: 9px 11px; font: inherit; color: var(--ink); min-width: 0; }
+.field input:focus, .field textarea:focus, .field select:focus { border-color: var(--teal); outline: none; box-shadow: 0 0 0 2px rgba(10,174,154,.2); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid var(--teal); background: #fff; color: var(--teal); padding: 12px 16px; font: 600 15px var(--body); cursor: pointer; text-decoration: none; }
+.btn.primary { background: var(--teal); color: #fff; }
+.btn:disabled { opacity: .5; cursor: default; }
+.btn.big { width: 100%; font-size: 16px; padding: 14px 16px; }
+.status { font-size: 14px; color: var(--teal-deep); min-height: 1.2em; }
+.status.err { color: #B3261E; font-weight: 600; }
+.order-grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 18px; align-items: start; }
+.panel { border: 1px solid var(--line); background: #fff; padding: 18px 20px; display: grid; gap: 14px; }
+.panel h3 { font-size: 17px; font-weight: 600; }
+.sticky .btn { padding: 8px 14px; font-size: 14px; background: #fff; color: var(--teal); border-color: #fff; }
+dialog.send { border: 0; padding: 0; width: min(560px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow: auto; background: #fff; color: var(--ink); box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+dialog.send::backdrop { background: rgba(23,40,37,.55); }
+.d-head { background: var(--teal); color: #fff; padding: 18px 20px 14px; display: grid; gap: 8px; position: relative; }
+.d-head h2 { color: #fff; font-size: 21px; font-weight: 600; padding-right: 32px; }
+.d-close { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; border: 0; background: none; color: #fff; font-size: 24px; cursor: pointer; line-height: 1; }
+.d-steps { display: flex; gap: 6px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; font-weight: 600; color: #CFEDE8; }
+.d-steps span { padding: 2px 8px; border: 1px solid rgba(255,255,255,.4); }
+.d-steps span.on { background: #fff; color: var(--teal); border-color: #fff; }
+.d-body { padding: 18px 20px 20px; display: grid; gap: 14px; }
+.notice { background: #FFF6E8; border-left: 4px solid var(--c-pk); padding: 10px 12px; font-size: 14px; }
+.amount { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; }
+.amount .a-val { font-family: var(--display); font-size: 32px; font-weight: 700; color: var(--teal); white-space: nowrap; }
+.confirm { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; cursor: pointer; }
+.confirm input { width: 20px; height: 20px; accent-color: var(--teal); margin: 1px 0 0; flex: none; }
+.send-btns { display: grid; gap: 8px; }
+.send-btns .btn { justify-content: space-between; width: 100%; }
+.send-btns .btn .tk { font-size: 13px; }
+.send-btns .btn.sent { background: var(--mist); border-color: var(--teal-light); color: var(--teal-deep); }
+.done-box { border: 2px solid var(--teal-light); padding: 14px; text-align: center; }
+.done-box .bigt { font-family: var(--display); font-size: 22px; font-weight: 700; color: var(--teal); }
+.link-btn { background: none; border: 0; color: var(--teal); font: 600 14px var(--body); cursor: pointer; text-decoration: underline; justify-self: start; padding: 0; }
+.mnote { font-size: 13px; color: var(--muted); }
+@media (max-width: 860px) { .order-grid { grid-template-columns: minmax(0,1fr); } }
+@media (max-width: 560px) { .sticky .wrap > span:first-child { display: none; } .sticky .wrap { flex-wrap: nowrap; padding-block: 8px; font-size: 13px; } .sticky b { font-size: 16px; } .sticky .btn { white-space: nowrap; padding: 7px 10px; } .fields { grid-template-columns: minmax(0,1fr); } .amount .a-val { font-size: 26px; } }
+@media print { #orderPanel, dialog.send, .sticky { display: none !important; } }
 </style>
 
 
@@ -283,16 +333,34 @@ footer b { color: var(--ink); font-family: var(--display); font-size: 16px; font
 <section id="example" style="background: var(--mist)">
   <div class="wrap">
     <div class="sec-head">
-      <div class="kicker">This month's order</div>
-      <div class="bar-title"><h2>Monthly bill</h2></div>
+      <div class="kicker">Your order</div>
+      <div class="bar-title"><h2>Bill and send</h2></div>
+      <p>Choose the order type, check the bill, add your name and press Send order. Orders that are paid now ask for the transfer reference before they are sent.</p>
     </div>
-    <div class="bill">
-      <div class="bill-head">Ticked items</div>
-      <div class="bill-body">
-        <div class="bill-list" id="billList"><span class="empty">No items ticked yet.</span></div>
-        <div class="bill-line"><span>Ticked items at list price</span><span class="num" id="billItems">0 SAR</span></div>
-        <div class="bill-line total"><span>Monthly invoice</span><span class="num" id="billTotal">1,500 SAR</span></div>
-        <p class="bill-note">The monthly invoice is 1,500 SAR, even when fewer items or no items are ticked. If the ticked items come to more than 1,500 SAR, the invoice is their full list price. Example: 4 static posts, 1 reel, 1 fixed bucket, email signatures and business cards for 5 people, and 2 resizes come to exactly 1,500 SAR.</p>
+    <div class="order-grid">
+      <div class="bill">
+        <div class="bill-head">Ticked items</div>
+        <div class="bill-body">
+          <div class="bill-list" id="billList"><span class="empty">No items ticked yet.</span></div>
+          <div class="bill-line"><span id="billItemsLabel">Ticked items</span><span class="num" id="billItems">0 SAR</span></div>
+          <div class="bill-line total"><span id="billTotalLabel">Monthly invoice</span><span class="num" id="billTotal">1,500 SAR</span></div>
+          <p class="bill-note" id="billNote"></p>
+        </div>
+      </div>
+      <div class="panel" id="orderPanel">
+        <h3>Order type</h3>
+        <div class="modes" role="radiogroup" aria-label="Order type">
+          <label class="mode"><input type="radio" name="mode" value="monthly" checked><span><b>Monthly order</b><small>Delivered during the new month. 1,500 SAR minimum, paid before work begins.</small></span></label>
+          <label class="mode"><input type="radio" name="mode" value="after"><span><b>Added after the 1st</b><small>Delivered within 3 to 5 working days. No payment now, billed on next month's invoice.</small></span></label>
+          <label class="mode"><input type="radio" name="mode" value="same"><span><b>Same day, super urgent</b><small>Double price, delivered the same day. Paid immediately.</small></span></label>
+        </div>
+        <div class="fields">
+          <div class="field"><label for="f-name">Your name</label><input id="f-name" type="text" autocomplete="name" placeholder="Required"></div>
+          <div class="field"><label for="f-month">For month</label><select id="f-month"></select></div>
+          <div class="field wide"><label for="f-notes">Brief and notes</label><textarea id="f-notes" rows="4" placeholder="Products, texts, sizes, dates, anything Sarah needs"></textarea></div>
+        </div>
+        <button class="btn primary big" id="b-send" type="button">Send order</button>
+        <div class="status" id="status" role="status"></div>
       </div>
     </div>
   </div>
@@ -340,35 +408,226 @@ footer b { color: var(--ink); font-family: var(--display); font-size: 16px; font
   </div>
 </footer>
 
-<div class="sticky" aria-live="polite"><div class="wrap"><span>Ticked: <b id="stItems">0 SAR</b></span><span>Monthly invoice: <b id="stTotal">1,500 SAR</b></span><a href="#example">See bill</a></div></div>
+
+<div class="sticky" aria-live="polite"><div class="wrap"><span>Ticked: <b id="stItems">0 SAR</b></span><span><span id="stLabel">Monthly invoice</span>: <b id="stTotal">1,500 SAR</b></span><a class="btn" href="#example">Review &amp; send</a></div></div>
+
+<dialog class="send" id="dlg" aria-labelledby="d-title">
+  <div class="d-head">
+    <button class="d-close" id="d-close" type="button" aria-label="Close">×</button>
+    <div class="d-steps" id="d-steps"><span data-s="pay">1 · Payment</span><span data-s="send">2 · Send order</span></div>
+    <h2 id="d-title">Pay to send your order</h2>
+  </div>
+  <div class="d-body" id="d-pay">
+    <div class="notice" id="d-pay-note"></div>
+    <div class="amount"><span><b>Amount to transfer</b><br><span class="mnote" id="d-for"></span></span><span class="a-val num" id="d-amt"></span></div>
+    <label class="confirm"><input type="checkbox" id="d-paid"><span>I have transferred <b id="d-amt2"></b> to Sarah's account.</span></label>
+    <div class="field"><label for="d-ref">Transfer reference number (required)</label><input id="d-ref" type="text" placeholder="From your bank's transfer confirmation"><span class="mnote">Enter the reference number from your bank transfer to continue.</span></div>
+    <button class="btn primary" id="d-next" type="button" disabled>Continue to send order</button>
+  </div>
+  <div class="d-body" id="d-send" hidden>
+    <div class="notice" id="d-send-note"></div>
+    <div class="send-btns">
+      <button class="btn primary" id="d-wa" type="button" disabled><span>Send on WhatsApp</span><span class="tk" id="t-wa">Preparing…</span></button>
+      <button class="btn primary" id="d-mail" type="button" disabled><span>Send by email</span><span class="tk" id="t-mail">Preparing…</span></button>
+    </div>
+    <p class="mnote" id="d-how">Your order PDF is attached automatically. Choose Sarah's chat in WhatsApp, or send the email to <b>sarahrabee3.designer@gmail.com</b>, and attach your transfer receipt if you have it.</p>
+    <div class="done-box" id="d-done" hidden><div class="bigt">Thank you</div><p>Sarah has your order and will confirm it shortly.</p></div>
+    <button class="link-btn" id="d-back" type="button">Back to payment details</button>
+  </div>
+</dialog>
+
 <script>
 (function(){
-  const MIN = 1500, f = n => n.toLocaleString("en-US") + " SAR";
+  const MIN = 1500, SARAH_WA = "966556204075", SARAH_EMAIL = "sarahrabee3.designer@gmail.com";
+  const MODES = {
+    monthly: { mult: 1,   label: "Monthly invoice",            pay: true,  title: "Monthly order" },
+    after:   { mult: 1.6, label: "Added to next month's invoice", pay: false, title: "Added after the 1st" },
+    same:    { mult: 2,   label: "Pay now, same day",          pay: true,  title: "Same-day order" },
+  };
+  const $ = id => document.getElementById(id);
+  const sar = n => Math.round(n).toLocaleString("en-US") + " SAR";
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const rows = [...document.querySelectorAll(".row.pl[data-code]")];
-  function update(){
-    let sum = 0, lines = [];
+  const mode = () => (document.querySelector('input[name=mode]:checked') || {}).value || "monthly";
+  // months: this month and the next 6
+  const now = new Date(), sel = $("f-month");
+  for (let k = 0; k < 7; k++) { const d = new Date(now.getFullYear(), now.getMonth() + k, 1); const o = document.createElement("option"); o.value = d.toISOString().slice(0, 7); o.textContent = d.toLocaleDateString("en-GB", { month: "long", year: "numeric" }); sel.appendChild(o); }
+  function setMonthDefault() { sel.selectedIndex = mode() === "monthly" ? 1 : 0; }
+  setMonthDefault();
+  function calc() {
+    const m = MODES[mode()], picked = [];
+    let sum = 0;
     rows.forEach(r => {
-      const on = r.querySelector(".tick input").checked;
-      r.classList.toggle("on", on);
+      const on = r.querySelector(".tick input").checked; r.classList.toggle("on", on);
       if (!on) return;
-      const q = Math.max(1, parseInt(r.querySelector(".q input").value, 10) || 1);
-      const line = q * +r.dataset.price; sum += line;
-      lines.push(`<div class="bill-line"><span>${r.dataset.code} ${r.dataset.name} × ${q}</span><span class="num">${f(line)}</span></div>`);
+      const qty = Math.max(1, parseInt(r.querySelector(".q input").value, 10) || 1);
+      const unit = Math.round(+r.dataset.price * m.mult), total = unit * qty;
+      sum += total; picked.push({ code: r.dataset.code, name: r.dataset.name, qty, unit, total });
     });
-    const total = Math.max(MIN, sum);
-    document.getElementById("billList").innerHTML = lines.length ? lines.join("") : '<span class="empty">No items ticked yet.</span>';
-    document.getElementById("billItems").textContent = f(sum);
-    document.getElementById("billTotal").textContent = f(total);
-    document.getElementById("stItems").textContent = f(sum);
-    document.getElementById("stTotal").textContent = f(total);
+    const total = mode() === "monthly" ? Math.max(MIN, sum) : sum;
+    return { m, picked, sum, total };
+  }
+  function update() {
+    const r = calc(), md = mode();
+    $("billList").innerHTML = r.picked.length ? r.picked.map(i => `<div class="bill-line"><span>${i.code} ${esc(i.name)} × ${i.qty}</span><span class="num">${sar(i.total)}</span></div>`).join("") : '<span class="empty">No items ticked yet.</span>';
+    $("billItemsLabel").textContent = md === "monthly" ? "Ticked items at list price" : (md === "after" ? "Ticked items at the after-the-1st price" : "Ticked items at the same-day price");
+    $("billItems").textContent = sar(r.sum);
+    $("billTotalLabel").textContent = r.m.label; $("billTotal").textContent = sar(r.total);
+    $("billNote").textContent = md === "monthly"
+      ? "The monthly invoice is 1,500 SAR, even when fewer items or no items are ticked. If the ticked items come to more than 1,500 SAR, the invoice is their full list price."
+      : md === "after" ? "Requests added after the 1st of the month are billed on next month's invoice. No payment is needed now."
+      : "Super urgent same-day work is double the item price and is paid immediately, before work begins.";
+    $("stItems").textContent = sar(r.sum); $("stLabel").textContent = r.m.label; $("stTotal").textContent = sar(r.total);
   }
   rows.forEach(r => {
     const q = r.querySelector(".q input");
     q.addEventListener("click", e => e.stopPropagation());
-    q.addEventListener("input", () => { if (!r.querySelector(".tick input").checked) r.querySelector(".tick input").checked = true; update(); });
+    q.addEventListener("input", () => { r.querySelector(".tick input").checked = true; update(); });
     r.querySelector(".tick input").addEventListener("change", update);
   });
+  document.querySelectorAll('input[name=mode]').forEach(i => i.addEventListener("change", () => { setMonthDefault(); update(); }));
   update();
+
+  // ---- send flow: pay (monthly and same day), then send on WhatsApp / email with a PDF
+  const dlg = $("dlg"), pay = { paid: false, ref: "", wa: false, mail: false };
+  let readyPdf = null;
+  const monthLabel = () => sel.options[sel.selectedIndex].textContent;
+  function flash(msg, err) { $("status").textContent = msg; $("status").classList.toggle("err", !!err); }
+  function summaryText() {
+    const r = calc(), out = [];
+    out.push(`${r.m.title} for ${monthLabel()} — Polywed${$("f-name").value.trim() ? ", from " + $("f-name").value.trim() : ""}`, "");
+    r.picked.forEach(i => out.push(`${i.code} ${i.name} × ${i.qty}: ${sar(i.total)}`));
+    out.push("", `${r.m.label}: ${sar(r.total)}`);
+    if (r.m.pay) out.push(pay.paid ? `Payment: ${sar(r.total)} transferred (reference: ${pay.ref.trim()})` : "Payment: not reported");
+    else out.push("No payment now: billed on next month's invoice.");
+    if ($("f-notes").value.trim()) out.push("", "Brief and notes:", $("f-notes").value.trim());
+    out.push("", "Order PDF attached.");
+    return out.join("\n");
+  }
+  function showStep(step) {
+    const needPay = calc().m.pay;
+    $("d-pay").hidden = step !== "pay"; $("d-send").hidden = step !== "send";
+    document.querySelectorAll("#d-steps span").forEach(s => { s.className = s.dataset.s === step ? "on" : ""; s.hidden = !needPay && s.dataset.s === "pay"; });
+    $("d-title").textContent = step === "pay" ? "Pay to send your order" : "Send your order to Sarah";
+    $("d-back").hidden = !needPay;
+    $("d-send-note").innerHTML = needPay ? "<b>Payment noted.</b> Now send your order to Sarah. She receives it with your payment details." : `<b>No payment now.</b> This request is ${esc(sar(calc().total))} and is added to next month's invoice.`;
+    markSent(); if (step === "send") preparePdf();
+  }
+  function markSent() {
+    const ready = !!readyPdf;
+    $("d-wa").disabled = $("d-mail").disabled = !ready;
+    $("t-wa").textContent = pay.wa ? "✓ Sent" : (ready ? "PDF attached" : "Preparing…"); $("d-wa").classList.toggle("sent", pay.wa);
+    $("t-mail").textContent = pay.mail ? "✓ Sent" : (ready ? "PDF attached" : "Preparing…"); $("d-mail").classList.toggle("sent", pay.mail);
+    $("d-done").hidden = !(pay.wa || pay.mail);
+  }
+  $("b-send").addEventListener("click", () => {
+    const r = calc();
+    if (!r.picked.length && mode() !== "monthly") { flash("Tick at least one item first.", true); return; }
+    if (!$("f-name").value.trim()) { flash("Please add your name first.", true); $("f-name").focus(); return; }
+    flash("");
+    Object.assign(pay, { paid: false, ref: "", wa: false, mail: false }); readyPdf = null;
+    $("d-paid").checked = false; $("d-ref").value = ""; $("d-next").disabled = true;
+    $("d-amt").textContent = $("d-amt2").textContent = sar(r.total);
+    $("d-for").textContent = `${r.m.title} · ${monthLabel()}`;
+    $("d-pay-note").innerHTML = mode() === "same"
+      ? "<b>Same-day orders are paid immediately.</b> Transfer the amount below to the bank account Sarah has shared with you, then come back here to send your order."
+      : "<b>Your order is sent to Sarah after payment.</b> Each month is paid in full before work begins. Transfer the amount below to the bank account Sarah has shared with you, then come back here to send your order.";
+    showStep(r.m.pay ? "pay" : "send");
+    dlg.showModal();
+  });
+  function canContinue() { $("d-next").disabled = !(pay.paid && pay.ref.trim().length >= 3); }
+  $("d-paid").addEventListener("change", () => { pay.paid = $("d-paid").checked; canContinue(); });
+  $("d-ref").addEventListener("input", () => { pay.ref = $("d-ref").value; canContinue(); });
+  $("d-next").addEventListener("click", () => showStep("send"));
+  $("d-back").addEventListener("click", () => showStep("pay"));
+  $("d-close").addEventListener("click", () => dlg.close());
+  dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+
+  function pdfName() { return `Polywed-${mode() === "monthly" ? "monthly-order" : mode() === "after" ? "added-request" : "same-day-order"}-${sel.value}.pdf`; }
+  let logoPng = null;
+  function loadLogo() {
+    if (logoPng) return Promise.resolve(logoPng);
+    return new Promise(res => {
+      const img = new Image();
+      img.onload = () => { try { const c = document.createElement("canvas"), s = 600 / img.naturalWidth; c.width = 600; c.height = Math.round(img.naturalHeight * s); c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); logoPng = { url: c.toDataURL("image/png"), ratio: c.height / c.width }; } catch (e) { logoPng = null; } res(logoPng); };
+      img.onerror = () => res(null);
+      img.src = document.querySelector(".top img").src;
+    });
+  }
+  async function buildPdf() {
+    const { jsPDF } = window.jspdf, r = calc();
+    const doc = new jsPDF({ unit: "mm", format: "a4" });
+    const W = 210, M = 16, TEAL = [0, 125, 112], INK = [43, 47, 46], MUTED = [100, 107, 105], LINE = [221, 227, 225];
+    const logo = await loadLogo();
+    if (logo) doc.addImage(logo.url, "PNG", M, 12, 46, 46 * logo.ratio);
+    doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(...MUTED);
+    doc.text(["Design order for Sarah's Design Studio", `Sent ${new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}`], W - M, 16, { align: "right" });
+    let y = 34;
+    doc.setFillColor(...TEAL); doc.rect(0, y, W, 22, "F");
+    doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(17);
+    doc.text(`${r.m.title}: ${monthLabel()}`, M, y + 10);
+    doc.setFont("helvetica", "normal"); doc.setFontSize(10);
+    doc.text(`Polywed · from ${$("f-name").value.trim()}`, M, y + 17);
+    y += 32;
+    doc.setFontSize(8.5); doc.setTextColor(...MUTED); doc.setFont("helvetica", "bold");
+    doc.text("CODE", M, y); doc.text("ITEM", M + 18, y); doc.text("QTY", 135, y, { align: "right" }); doc.text("UNIT", 160, y, { align: "right" }); doc.text("TOTAL", W - M, y, { align: "right" });
+    y += 2; doc.setDrawColor(...TEAL); doc.setLineWidth(0.8); doc.line(M, y, W - M, y); y += 6;
+    doc.setLineWidth(0.2); doc.setDrawColor(...LINE);
+    if (!r.picked.length) { doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor(...MUTED); doc.text("No items ticked this month.", M, y); y += 8; }
+    r.picked.forEach(i => {
+      if (y > 250) { doc.addPage(); y = 20; }
+      doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.setTextColor(...TEAL); doc.text(i.code, M, y);
+      doc.setTextColor(...INK); doc.text(i.name, M + 18, y);
+      doc.setFont("helvetica", "normal"); doc.text(String(i.qty), 135, y, { align: "right" }); doc.text(sar(i.unit), 160, y, { align: "right" });
+      doc.setFont("helvetica", "bold"); doc.text(sar(i.total), W - M, y, { align: "right" });
+      y += 4; doc.line(M, y, W - M, y); y += 6;
+    });
+    y += 2;
+    doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.setTextColor(...MUTED);
+    doc.text("Ticked items", 112, y); doc.text(sar(r.sum), W - M, y, { align: "right" }); y += 6;
+    if (mode() === "monthly" && r.sum < MIN) { doc.text("Monthly minimum applies", 112, y); doc.text(sar(MIN), W - M, y, { align: "right" }); y += 6; }
+    doc.setDrawColor(...INK); doc.setLineWidth(0.6); doc.line(112, y - 2, W - M, y - 2); y += 5;
+    doc.setFont("helvetica", "bold"); doc.setFontSize(12); doc.setTextColor(...INK); doc.text(r.m.label, 112, y);
+    doc.setFontSize(18); doc.setTextColor(...TEAL); doc.text(sar(r.total), W - M, y + 1, { align: "right" });
+    y += 12;
+    doc.setFillColor(244, 247, 246); doc.rect(M, y, W - 2 * M, r.m.pay ? 22 : 14, "F");
+    doc.setFontSize(10); doc.setTextColor(...INK); doc.setFont("helvetica", "bold");
+    if (!r.m.pay) { doc.text("No payment now", M + 5, y + 6); doc.setFont("helvetica", "normal"); doc.setTextColor(...MUTED); doc.text("Requests added after the 1st are billed on next month's invoice.", M + 5, y + 11); y += 20; }
+    else { doc.text(pay.paid ? "Payment reported by client" : "Payment not reported", M + 5, y + 6); doc.setFont("helvetica", "normal"); doc.setTextColor(...MUTED); doc.text(`${sar(r.total)} to Sarah's Design Studio`, M + 5, y + 11.5); doc.text(pay.ref.trim() ? `Transfer reference: ${pay.ref.trim()}` : "Transfer reference: not given", M + 5, y + 17); y += 28; }
+    const notes = $("f-notes").value.trim();
+    if (notes) { doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.setTextColor(...INK); doc.text("Brief and notes", M, y); y += 5; doc.setFont("helvetica", "normal"); doc.setTextColor(...MUTED); const ls = doc.splitTextToSize(notes, W - 2 * M); doc.text(ls, M, y); }
+    doc.setPage(doc.getNumberOfPages());
+    doc.setFontSize(8.5); doc.setTextColor(...MUTED);
+    doc.text(`Sarah's Design Studio · WhatsApp +966 55 620 4075 · ${SARAH_EMAIL}`, M, 280);
+    doc.text("Prices in SAR, excluding VAT where applicable. Monthly minimum 1,500 SAR. Prices fixed for 6 months.", M, 285);
+    doc.setDrawColor(10, 174, 154); doc.setLineWidth(1.2); doc.line(0, 290, W, 290);
+    return doc.output("blob");
+  }
+  function flashD(msg) { $("d-send-note").innerHTML = `<b>${esc(msg)}</b>`; }
+  async function preparePdf() {
+    readyPdf = null; markSent();
+    if (!window.jspdf) { flashD("The PDF tool didn't load. Check your internet connection, then close and press Send order again."); return; }
+    try { readyPdf = new File([await buildPdf()], pdfName(), { type: "application/pdf" }); } catch (e) { flashD("Couldn't make the order PDF. Please close and press Send order again."); }
+    markSent();
+  }
+  function canShareFiles(list) { try { return !!(navigator.canShare && navigator.share && navigator.canShare({ files: list })); } catch (e) { return false; } }
+  function saveFile(file) { const a = document.createElement("a"); a.href = URL.createObjectURL(file); a.download = file.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); }
+  async function send(channel) {
+    if (!readyPdf) return;
+    const txt = summaryText();
+    if (canShareFiles([readyPdf])) {
+      try { await navigator.share({ files: [readyPdf], title: `Polywed ${calc().m.title}: ${monthLabel()}`, text: channel === "mail" ? `To: ${SARAH_EMAIL}\n\n${txt}` : txt }); pay[channel] = true; markSent(); return; }
+      catch (e) { if (e && e.name === "AbortError") return; }
+    }
+    const subject = `Polywed ${calc().m.title}: ${monthLabel()}`;
+    if (channel === "wa") window.open(`https://wa.me/${SARAH_WA}?text=` + encodeURIComponent(txt), "_blank", "noopener");
+    else { const a = document.createElement("a"); a.href = `mailto:${SARAH_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(txt)}`; a.style.display = "none"; document.body.appendChild(a); a.click(); a.remove(); }
+    saveFile(readyPdf);
+    $("d-how").innerHTML = `This browser can't attach files by itself, so your order PDF was saved to your device as <b>${esc(readyPdf.name)}</b>. Please attach it to the message before you press send.`;
+    pay[channel] = true; markSent();
+  }
+  $("d-wa").addEventListener("click", () => send("wa"));
+  $("d-mail").addEventListener("click", () => send("mail"));
 })();
 </script>
 </body></html>
