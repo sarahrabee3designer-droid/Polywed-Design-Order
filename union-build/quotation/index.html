@@ -115,6 +115,7 @@ td { padding:13px 10px; border-bottom:1px solid var(--line); vertical-align:top;
 .dlg-box input, .dlg-box textarea { font:inherit; padding:9px 10px; border:1px solid #C9D2CF; border-radius:6px; width:100%; }
 .dlg-box input:focus, .dlg-box textarea:focus { outline:2px solid #0AAE9A; outline-offset:0; }
 .dlg-sum { background:#F4F7F6; border-radius:6px; padding:10px 12px; font-size:13px; white-space:pre-line; }
+.dlg-pay { background:#FFF6D6; border-radius:6px; padding:10px 12px; font-size:13px; }
 .dlg-err { color:#A12C2C; margin:0; font-size:13px; }
 .dlg-btns { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:4px; }
 .btn { display:block; text-align:center; text-decoration:none; font-weight:600; padding:11px 10px; border-radius:6px; color:#fff; }
@@ -296,7 +297,9 @@ td { padding:13px 10px; border-bottom:1px solid var(--line); vertical-align:top;
 <label for="c-name">Your name</label><input id="c-name" type="text" autocomplete="name" placeholder="e.g. Rabeh Zidan Elsayed">
 <label for="c-notes">Notes (optional)</label><textarea id="c-notes" rows="3" placeholder="Anything Sarah should know"></textarea>
 <div class="dlg-sum" id="dlg-sum"></div>
-<p class="dlg-err" id="dlg-err" hidden>Please add your name first.</p>
+<div class="dlg-pay"><b>First payment (50%): <span id="pay-amt"></span></b><br>Please transfer it to the bank account Sarah shared with you before sending.</div>
+<label for="c-ref">Bank transfer reference</label><input id="c-ref" type="text" autocomplete="off" placeholder="Reference number from your bank">
+<p class="dlg-err" id="dlg-err" hidden></p>
 <div class="dlg-btns">
 <a id="go-wa" class="btn wa" href="#" target="_blank" rel="noopener">Send on WhatsApp</a>
 <a id="go-mail" class="btn mail" href="#">Send by email</a>
@@ -347,7 +350,7 @@ td { padding:13px 10px; border-bottom:1px solid var(--line); vertical-align:top;
 
   // Send
   var dlg = document.getElementById('send-dlg'), nameEl = document.getElementById('c-name'),
-      notesEl = document.getElementById('c-notes'), sumEl = document.getElementById('dlg-sum'),
+      notesEl = document.getElementById('c-notes'), refEl = document.getElementById('c-ref'), payEl = document.getElementById('pay-amt'), sumEl = document.getElementById('dlg-sum'),
       err = document.getElementById('dlg-err'), wa = document.getElementById('go-wa'),
       mail = document.getElementById('go-mail'), copyBtn = document.getElementById('dlg-copy');
 
@@ -365,6 +368,8 @@ td { padding:13px 10px; border-bottom:1px solid var(--line); vertical-align:top;
       lines.push('', 'Optional extras: none');
     }
     lines.push('', 'Total: ' + fmt(s.total) + ' (excluding VAT)');
+    lines.push('First payment (50%) transferred: ' + fmt(s.total / 2));
+    lines.push('Bank transfer reference: ' + (refEl.value.trim() || '-'));
     var name = nameEl.value.trim(), notes = notesEl.value.trim();
     if (notes) lines.push('', 'Notes: ' + notes);
     lines.push('', 'Name: ' + (name || '-'));
@@ -376,6 +381,7 @@ td { padding:13px 10px; border-bottom:1px solid var(--line); vertical-align:top;
     t += 'Extras: ' + (s.picked.length ? s.picked.length + ' selected, ' + fmt(s.extras) : 'none') + '\n';
     t += 'Total: ' + fmt(s.total) + ' (excl. VAT)';
     sumEl.textContent = t;
+    payEl.textContent = fmt(s.total / 2);
   }
   function refreshLinks() {
     var m = message();
@@ -383,16 +389,20 @@ td { padding:13px 10px; border-bottom:1px solid var(--line); vertical-align:top;
     mail.href = 'mailto:' + MAIL + '?subject=' + encodeURIComponent('Union Build quotation Q-2026-002 approved') + '&body=' + encodeURIComponent(m);
   }
   function guard(e) {
-    if (!nameEl.value.trim()) { e.preventDefault(); err.hidden = false; nameEl.focus(); return; }
+    var miss = null;
+    if (!nameEl.value.trim()) miss = [nameEl, 'Please add your name first.'];
+    else if (refEl.value.trim().length < 3) miss = [refEl, 'Please add the bank transfer reference for the first payment before sending.'];
+    if (miss) { e.preventDefault(); err.textContent = miss[1]; err.hidden = false; miss[0].focus(); return; }
     err.hidden = true; refreshLinks();
   }
   document.getElementById('send').addEventListener('click', function () {
     summary(); refreshLinks(); err.hidden = true; dlg.hidden = false; nameEl.focus();
   });
-  [nameEl, notesEl].forEach(function (el) { el.addEventListener('input', function () { err.hidden = true; refreshLinks(); }); });
+  [nameEl, notesEl, refEl].forEach(function (el) { el.addEventListener('input', function () { err.hidden = true; refreshLinks(); }); });
   wa.addEventListener('click', guard);
   mail.addEventListener('click', guard);
-  copyBtn.addEventListener('click', function () {
+  copyBtn.addEventListener('click', function (e) {
+    guard(e); if (!err.hidden) return;
     var m = message();
     var done = function () { copyBtn.textContent = 'Message copied'; };
     if (navigator.clipboard && navigator.clipboard.writeText) {
