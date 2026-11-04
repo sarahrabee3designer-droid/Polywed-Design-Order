@@ -116,6 +116,8 @@ td { padding:13px 10px; border-bottom:1px solid var(--line); vertical-align:top;
 .dlg-box input:focus, .dlg-box textarea:focus { outline:2px solid #0AAE9A; outline-offset:0; }
 .dlg-sum { background:#F4F7F6; border-radius:6px; padding:10px 12px; font-size:13px; white-space:pre-line; }
 .dlg-pay { background:#FFF6D6; border-radius:6px; padding:10px 12px; font-size:13px; }
+.dlg-extras { margin:0; font-size:13px; color:#007D70; font-weight:600; }
+.x-note { color:#007D70; font-weight:600; }
 .dlg-err { color:#A12C2C; margin:0; font-size:13px; }
 .dlg-btns { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:4px; }
 .btn { display:block; text-align:center; text-decoration:none; font-weight:600; padding:11px 10px; border-radius:6px; color:#fff; }
@@ -297,7 +299,8 @@ td { padding:13px 10px; border-bottom:1px solid var(--line); vertical-align:top;
 <label for="c-name">Your name</label><input id="c-name" type="text" autocomplete="name" placeholder="e.g. Rabeh Zidan Elsayed">
 <label for="c-notes">Notes (optional)</label><textarea id="c-notes" rows="3" placeholder="Anything Sarah should know"></textarea>
 <div class="dlg-sum" id="dlg-sum"></div>
-<div class="dlg-pay"><b>First payment (50%): <span id="pay-amt"></span></b><br>Please transfer it to the bank account Sarah shared with you before sending.</div>
+<div class="dlg-pay"><b>First payment (50%): <span id="pay-amt"></span></b><br><span id="pay-basis">Half of the launch package.</span> Please transfer it to the bank account Sarah shared with you before sending.</div>
+<p class="dlg-extras" id="dlg-extras" hidden>You added extras: Sarah will send you their timeline after you press Send.</p>
 <label for="c-ref">Bank transfer reference</label><input id="c-ref" type="text" autocomplete="off" placeholder="Reference number from your bank">
 <p class="dlg-err" id="dlg-err" hidden></p>
 <div class="dlg-btns">
@@ -340,6 +343,13 @@ td { padding:13px 10px; border-bottom:1px solid var(--line); vertical-align:top;
     var s = state();
     var set = function (id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
     set('c-base', fmt(s.base)); set('c-extras', fmt(s.extras)); set('c-total', fmt(s.total));
+    q.querySelectorAll('.half').forEach(function (el) { el.textContent = fmt(s.total / 2); });
+    var xn = document.getElementById('x-note');
+    if (!xn) {
+      var cn = q.querySelector('.calc-note');
+      if (cn) { xn = document.createElement('span'); xn.id = 'x-note'; xn.className = 'x-note'; cn.appendChild(document.createElement('br')); cn.appendChild(xn); }
+    }
+    if (xn) xn.textContent = s.picked.length ? 'The timeline for your extras will be sent to you after you press Send.' : '';
   }
   q.addEventListener('input', recalc);
   q.addEventListener('change', recalc);
@@ -364,6 +374,7 @@ td { padding:13px 10px; border-bottom:1px solid var(--line); vertical-align:top;
         lines.push('- ' + p.name + (p.unit ? ' (' + p.n + ' ' + p.unit + ')' : '') + ': ' + fmt(p.sum));
       });
       lines.push('Extras total: ' + fmt(s.extras));
+      lines.push('Please send me the timeline for the extras.');
     } else {
       lines.push('', 'Optional extras: none');
     }
@@ -382,6 +393,8 @@ td { padding:13px 10px; border-bottom:1px solid var(--line); vertical-align:top;
     t += 'Total: ' + fmt(s.total) + ' (excl. VAT)';
     sumEl.textContent = t;
     payEl.textContent = fmt(s.total / 2);
+    document.getElementById('pay-basis').textContent = s.picked.length ? 'Half of the total, including your extras.' : 'Half of the launch package.';
+    document.getElementById('dlg-extras').hidden = !s.picked.length;
   }
   function refreshLinks() {
     var m = message();
